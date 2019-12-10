@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.github.einvoice.testcase.einvoicehisb.entity.EinvoiceHisBVO;
+import com.yonyou.einvoice.common.metadata.mp.Many;
 import com.yonyou.einvoice.common.metadata.mp.anno.InsertBatchIgnore;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import java.math.BigDecimal;
@@ -525,6 +526,7 @@ public class EinvoiceHisVO {
 
   @TableField(exist = false)
   @GraphQLQuery(description = "EinvoiceHis详情")
+  @Many
   protected List<EinvoiceHisBVO> einvoiceHisBVOList;
 
 }

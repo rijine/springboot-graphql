@@ -15,7 +15,7 @@ import lombok.ToString;
  *
  * @author liuqiangm
  */
-@TableName("einvoice_his_ext")
+@TableName(value = "einvoice_his_ext", autoResultMap = true)
 @Getter
 @Setter
 @ToString

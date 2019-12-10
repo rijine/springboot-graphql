@@ -122,6 +122,8 @@ public class AbstractMybatisService<T, Q extends IMetaMapper> extends
    */
   private Map<String, String> property2ColumnMap;
 
+  protected String extEntityClassName;
+
   /**
    * 用于保存T类型中属性property -> java中的反射Field映射。 该映射用于通过反射，对java bean对象进行权限字段赋值操作。
    */
@@ -144,6 +146,7 @@ public class AbstractMybatisService<T, Q extends IMetaMapper> extends
    * 用于保存当前service所对应的实体类名称。（非扩展类）
    */
   protected String entityClassName;
+  private List<String> relativeSelectFields = null;
 
   /**
    * 单例。惰性初始化，用于在不同的service之间公用
@@ -198,6 +201,7 @@ public class AbstractMybatisService<T, Q extends IMetaMapper> extends
     parentTableName = extendTableInfo.getParentTableName();
     keyField = extendTableInfo.getKeyField();
     Class keyClass = keyField.getDeclaringClass();
+    extEntityClassName = keyClass.getName();
     keyFieldAccess = FieldAccess.get(keyClass);
     keyFieldIndex = keyFieldAccess.getIndex(keyField);
     if (parentKeyField == null || keyField == null) {
@@ -454,7 +458,16 @@ public class AbstractMybatisService<T, Q extends IMetaMapper> extends
   }
 
   public List<T> selectWithRelationByDynamicCondition(EntityCondition condition) {
-    List<Object> list = DynamicSqlInjector.RESULTMAP_MAP.get(entityClassName);
+    if (relativeSelectFields != null) {
+      visitCondition(condition);
+      return innerRelativeSelect(condition, relativeSelectFields);
+    }
+    List<Object> list = null;
+    if (extEntityClassName == null) {
+      list = DynamicSqlInjector.RESULTMAP_MAP.get(entityClassName);
+    } else {
+      list = DynamicSqlInjector.RESULTMAP_MAP.get(extEntityClassName);
+    }
     if (CollectionUtils.isEmpty(list)) {
       return this.selectByDynamicCondition(condition, (List) null);
     }
@@ -467,8 +480,20 @@ public class AbstractMybatisService<T, Q extends IMetaMapper> extends
         nestedResultMapList.add(resultMapping);
         continue;
       }
-      selectFields.add(String.format("t0.`%s`", resultMapping.getColumn()));
+      selectFields.add(String.format("%s", resultMapping.getColumn()));
     }
+    List<String> fields = getSelectFields(selectFields);
+    selectFields.clear();
+    fields.forEach(selectField -> {
+      String field = selectField.substring(1, selectField.length() - 1);
+      if (parentTableColumnSet != null && parentTableColumnSet.contains(field)) {
+        selectFields.add("t_s0." + selectField);
+      } else if (selfTableColumnSet != null && selfTableColumnSet.contains(field)) {
+        selectFields.add("t_s1." + selectField);
+      } else {
+        selectFields.add("t0." + selectField);
+      }
+    });
     if (!CollectionUtils.isEmpty(nestedResultMapList)) {
       for (ResultMapping nested : nestedResultMapList) {
         ResultMap subResultMap = (ResultMap) DynamicSqlInjector.configuration
@@ -481,8 +506,9 @@ public class AbstractMybatisService<T, Q extends IMetaMapper> extends
         }
       }
     }
+    relativeSelectFields = selectFields;
     visitCondition(condition);
-    return innerRelativeSelect(condition, selectFields);
+    return innerRelativeSelect(condition, relativeSelectFields);
   }
 
   /**

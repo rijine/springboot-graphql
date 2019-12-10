@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.yonyou.einvoice.common.metadata.mp.Many;
 import com.yonyou.einvoice.common.metadata.mp.anno.InsertBatchIgnore;
 import com.yonyou.einvoice.extend.einvoicehisb.entity.EinvoiceHisBVO;
 import io.leangen.graphql.annotations.GraphQLQuery;
@@ -21,7 +22,7 @@ import org.hibernate.validator.constraints.Length;
  *
  * @author liuqiangm
  */
-@TableName("einvoice_his")
+@TableName(value = "einvoice_his", autoResultMap = true)
 @Getter
 @Setter
 @ToString
@@ -522,8 +523,8 @@ public class EinvoiceHisVO {
   /**
    * 子表详情列表，注解表明该字段非数据库表字段
    */
-  @GraphQLQuery(name = "", description = "EinvoiceHis详情")
   @TableField(exist = false)
+  @Many
   protected List<EinvoiceHisBVO> einvoiceHisBVOList;
 
 }

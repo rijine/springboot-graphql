@@ -414,16 +414,24 @@ public class ExtTableInfo extends TableInfo {
     if (resultMap == null && autoInitResultMap) {
       String id = currentNamespace + DOT + MYBATIS_PLUS + UNDERSCORE + entityType.getSimpleName();
       List<ResultMapping> resultMappings = new ArrayList<>();
-      if (keyType != null) {
-        ResultMapping idMapping = new ResultMapping.Builder(configuration, keyProperty, keyColumn,
-            keyType)
+      if (parentKeyType != null) {
+        ResultMapping idMapping = new ResultMapping.Builder(configuration, parentKeyProperty,
+            parentKeyColumn,
+            parentKeyType)
             .flags(Collections.singletonList(ResultFlag.ID)).build();
         resultMappings.add(idMapping);
       }
-      if (CollectionUtils.isNotEmpty(fieldList)) {
+      if (CollectionUtils.isNotEmpty(parentFieldList)) {
         fieldList.forEach(
             i -> resultMappings.add(((ExtTableFieldInfo) i).getResultMapping(configuration)));
       }
+      if (CollectionUtils.isNotEmpty(selfFieldList)) {
+        fieldList.forEach(
+            i -> resultMappings.add(((ExtTableFieldInfo) i).getResultMapping(configuration)));
+      }
+      ResultMapping mapping = new ResultMapping.Builder(configuration, keyProperty, keyColumn,
+          keyType).build();
+      resultMappings.add(mapping);
       ResultMap resultMap = new ResultMap.Builder(configuration, id, entityType, resultMappings)
           .build();
       configuration.addResultMap(resultMap);

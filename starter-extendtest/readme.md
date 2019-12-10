@@ -61,6 +61,22 @@ http://localhost:8080/graphql
 在左上方输入：
 
 ```
+# 测试主子表联合查询（Many、One注解）
+query relative($condition1: EntityConditionInput) {
+  einvoiceHisRelative(dynamicCond: $condition1) {
+    id
+    fpqqlsh
+    tenantid
+    kplx
+    einvoiceHisBVOList {
+      id
+      hid
+      xmmc
+      kce
+    }
+  }
+}
+
 # 测试分页查询。包含分页查询总数+当前分页查询结果
 query page($condition: EntityConditionInput) {
   einvoiceCount: einvoiceHisCountAllDynamic(dynamicCond: $condition)
@@ -130,12 +146,32 @@ mutation deleteList {
 mutation deleteListWithPermission {
   deleteEinvoiceHisListWithPermission
 }
+
 ```
 
 在左下方输入：
 
 ```
 {
+  "condition1": {
+    "joins": [
+      {
+        "jointype": "INNERJOIN",
+        "target": "einvoice_his_b",
+        "alias": "t1",
+        "on": {
+          "sourceAlias1": "t0",
+          "field1": "id",
+          "sourceAlias2": "t1",
+          "field2": "hid"
+        }
+      }
+    ],
+    "limit": {
+      "pageIndex": 1,
+      "size": 5
+    }
+  },
   "condition": {
     "conditions": {
       "conditionList": [

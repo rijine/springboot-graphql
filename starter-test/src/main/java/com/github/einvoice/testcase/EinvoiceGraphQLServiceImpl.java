@@ -70,6 +70,13 @@ public class EinvoiceGraphQLServiceImpl implements IGraphQLService {
     return einvoiceHisVOList;
   }
 
+  @GraphQLQuery(name = "einvoiceHisRelative")
+  public List<EinvoiceHisVO> getEinvoiceHisRelative(
+      @GraphQLArgument(name = "dynamicCond") EntityCondition dynamicCond) {
+    List einvoiceHisVOList = einvoiceHisVOService.selectWithRelationByDynamicCondition(dynamicCond);
+    return einvoiceHisVOList;
+  }
+
   /**
    * 与上相同，用于测试分页（不添加权限控制）。获取分页总数
    *
