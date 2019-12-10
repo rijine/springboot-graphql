@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>metadata-graphql</artifactId>
+  <packaging>pom</packaging>
+  <modules>
+    <module>starter-test</module>
+    <module>spring-boot-starter-metadata</module>
+    <module>starter-test2</module>
+    <module>starter-extendtest</module>
+  </modules>
+  <groupId>com.github.pkuliuqiang</groupId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>metadata-graphql</name>
+
+  <!-- Spring Boot 启动父依赖 -->
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.1.4.RELEASE</version>
+  </parent>
+
+  <properties>
+    <mybatis-spring-boot>1.2.0</mybatis-spring-boot>
+    <mysql-connector>5.1.39</mysql-connector>
+    <mybatis.starter.version>2.1.1</mybatis.starter.version>
+    <mybatis-plus.version>3.1.2</mybatis-plus.version>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+  </properties>
+
+  <dependencies>
+
+    <!-- reflectasm，比jdk反射更快！ -->
+    <dependency>
+      <artifactId>reflectasm</artifactId>
+      <groupId>com.esotericsoftware</groupId>
+      <version>1.11.9</version>
+    </dependency>
+
+
+    <!-- Spring Boot Web 依赖 -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-json -->
+    <dependency>
+      <artifactId>spring-boot-starter-json</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <version>2.2.1.RELEASE</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.6</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Spring Boot Test 依赖 -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Junit -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+    </dependency>
+  </dependencies>
+</project>

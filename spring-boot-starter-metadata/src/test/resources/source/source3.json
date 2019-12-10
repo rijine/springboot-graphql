@@ -1,0 +1,53 @@
+{
+  "conditions": {
+    "conditionList": [
+      {
+        "operator": "EQUAL",
+        "sourceField": {
+          "field": "name",
+          "sourceAlias": "t0"
+        },
+        "v1": {
+          "val": "einvoice"
+        }
+      }
+    ]
+  },
+  "distinct": false,
+  "having": {
+    "conditionList": [
+      {
+        "operator": "EQUAL",
+        "sourceField": {
+          "field": "name",
+          "sourceAlias": "t0"
+        },
+        "v1": {
+          "val": "einvoice"
+        }
+      }
+    ]
+  },
+  "joins": [
+    {
+      "alias": "t1",
+      "jointype": "INNERJOIN",
+      "on": {
+        "field1": "id",
+        "field2": "id",
+        "sourceAlias1": "t0",
+        "sourceAlias2": "t1"
+      },
+      "target": "invoice"
+    }
+  ],
+  "orderby": {
+    "orderbyitems": [
+      {
+        "direction": "ASC",
+        "field": "id",
+        "sourceAlias": "t0"
+      }
+    ]
+  }
+}

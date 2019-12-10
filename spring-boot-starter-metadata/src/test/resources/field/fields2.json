@@ -1,0 +1,19 @@
+{
+  "distinct": true,
+  "fieldList": [
+    {
+      "alias": "n",
+      "field": "name",
+      "sourceAlias": "t0"
+    },
+    {
+      "aggr": {
+        "aggrEnum": "COUNT",
+        "distinct": true
+      },
+      "alias": "i",
+      "field": "id",
+      "sourceAlias": "t0"
+    }
+  ]
+}

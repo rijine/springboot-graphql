@@ -1,0 +1,20 @@
+{
+  "conditionList": [
+    {
+      "operator": "IN",
+      "sourceField": {
+        "field": "name",
+        "sourceAlias": "t0"
+      },
+      "v1": {
+        "list": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    }
+  ]
+}

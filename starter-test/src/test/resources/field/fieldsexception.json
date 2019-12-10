@@ -1,0 +1,7 @@
+{
+  "aggr": {
+    "distinct": true
+  },
+  "field": "name",
+  "sourceAlias": "t0"
+}

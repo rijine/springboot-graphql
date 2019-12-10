@@ -1,0 +1,17 @@
+{
+  "alias": "t0",
+  "joins": [
+    {
+      "alias": "inv",
+      "jointype": "INNERJOIN",
+      "on": {
+        "field1": "order",
+        "field2": "id",
+        "sourceAlias1": "t0",
+        "sourceAlias2": "inv"
+      },
+      "target": "invoice"
+    }
+  ],
+  "source": "invoice"
+}

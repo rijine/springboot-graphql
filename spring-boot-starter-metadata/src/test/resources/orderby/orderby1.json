@@ -1,0 +1,31 @@
+{
+  "orderbyitems": [
+    {
+      "direction": "ASC",
+      "fieldAlias": "n"
+    },
+    {
+      "direction": "DESC",
+      "field": "id",
+      "sourceAlias": "t0"
+    },
+    {
+      "aggr": {
+        "aggrEnum": "SUM",
+        "distinct": false
+      },
+      "direction": "ASC",
+      "field": "code",
+      "sourceAlias": "t0"
+    },
+    {
+      "aggr": {
+        "aggrEnum": "COUNT",
+        "distinct": false
+      },
+      "direction": "ASC",
+      "field": "ts",
+      "sourceAlias": "t0"
+    }
+  ]
+}

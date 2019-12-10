@@ -1,0 +1,12 @@
+{
+  "groupbyitems": [
+    {
+      "field": "name",
+      "sourceAlias": "t0"
+    },
+    {
+      "field": "id",
+      "sourceAlias": "t0"
+    }
+  ]
+}

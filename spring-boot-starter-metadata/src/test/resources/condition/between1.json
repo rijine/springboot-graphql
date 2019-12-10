@@ -1,0 +1,13 @@
+{
+  "operator": "BETWEEN",
+  "sourceField": {
+    "field": "ts",
+    "sourceAlias": "t0"
+  },
+  "v1": {
+    "val": "2018-01-01"
+  },
+  "v2": {
+    "val": "2020-01-01"
+  }
+}

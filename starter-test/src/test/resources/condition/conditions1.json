@@ -1,0 +1,14 @@
+{
+  "conditionList": [
+    {
+      "operator": "EQUAL",
+      "sourceField": {
+        "field": "name",
+        "sourceAlias": "t0"
+      },
+      "v1": {
+        "val": "luck"
+      }
+    }
+  ]
+}
