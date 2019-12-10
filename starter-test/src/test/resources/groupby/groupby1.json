@@ -1,8 +1,0 @@
-{
-  "groupbyitems": [
-    {
-      "field": "name",
-      "sourceAlias": "t0"
-    }
-  ]
-}

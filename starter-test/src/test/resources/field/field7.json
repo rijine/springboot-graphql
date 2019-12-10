@@ -1,8 +1,0 @@
-{
-  "aggr": {
-    "aggrEnum": "COUNT",
-    "distinct": false
-  },
-  "field": "name",
-  "sourceAlias": "t0"
-}

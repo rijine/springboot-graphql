@@ -54,6 +54,12 @@ public abstract class AbstractMybatisPermissionService<T, Q extends IMetaMapper>
     return super.selectByDynamicCondition(condition, field);
   }
 
+  @Override
+  public List<T> selectWithRelationByDynamicCondition(EntityCondition condition) {
+    addPermissionConditions(condition, getPermissionVisitorList(applicationContext));
+    return super.selectWithRelationByDynamicCondition(condition);
+  }
+
   /**
    * 查询条件动态拼接。用于获取符合条件的记录（可分页）
    *
