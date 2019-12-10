@@ -422,11 +422,11 @@ public class ExtTableInfo extends TableInfo {
         resultMappings.add(idMapping);
       }
       if (CollectionUtils.isNotEmpty(parentFieldList)) {
-        fieldList.forEach(
+        parentFieldList.forEach(
             i -> resultMappings.add(((ExtTableFieldInfo) i).getResultMapping(configuration)));
       }
       if (CollectionUtils.isNotEmpty(selfFieldList)) {
-        fieldList.forEach(
+        selfFieldList.forEach(
             i -> resultMappings.add(((ExtTableFieldInfo) i).getResultMapping(configuration)));
       }
       ResultMapping mapping = new ResultMapping.Builder(configuration, keyProperty, keyColumn,

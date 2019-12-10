@@ -68,6 +68,8 @@ query relative($condition1: EntityConditionInput) {
     fpqqlsh
     tenantid
     kplx
+    extId
+    extTenantid
     einvoiceHisBVOList {
       id
       hid
