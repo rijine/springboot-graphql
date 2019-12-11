@@ -537,14 +537,18 @@ public class EntityCondition implements IMetaElement {
     /**
      * orderby语句
      */
-    public EntityConditionBuilder orderby(String sourceAlias, String field) {
-      return orderby(sourceAlias, field, DirectionEnum.ASC);
+    public EntityConditionBuilder orderbyAsc(String sourceAlias, String sourceField) {
+      return orderbyAsc(sourceAlias, sourceField, DirectionEnum.ASC);
+    }
+
+    public EntityConditionBuilder orderByDesc(String sourceAlias, String sourceField) {
+      return orderbyAsc(sourceAlias, sourceField, DirectionEnum.DESC);
     }
 
     /**
      * orderby语句，包含方向
      */
-    public EntityConditionBuilder orderby(String sourceAlias, String field,
+    private EntityConditionBuilder orderbyAsc(String sourceAlias, String field,
         DirectionEnum directionEnum) {
       if (orderby == null) {
         orderby = new Orderby();

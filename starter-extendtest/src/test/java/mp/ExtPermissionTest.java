@@ -238,7 +238,7 @@ public class ExtPermissionTest {
         .field("t0", "fpqqlsh").eq(fpqqlsh)
         .field("t0", "tenantid").eq(tenantid)
         .field("t0", "ext_tenantid").eq(tenantid)
-        .orderby("t0", "id")
+        .orderbyAsc("t0", "id")
         .page(1, 15)
         .build();
     List<EinvoiceHisVO> einvoiceHisVOList = einvoiceHisVOService
@@ -255,7 +255,7 @@ public class ExtPermissionTest {
         .field("t0", "fpqqlsh").eq(fpqqlsh)
         .field("t0", "tenantid").eq(tenantid)
         .field("t0", "ext_tenantid").eq(tenantid)
-        .orderby("t0", "id")
+        .orderbyAsc("t0", "id")
         .page(1, 15)
         .build();
     List<EinvoiceHisVO> einvoiceHisVOList = einvoiceHisVOService

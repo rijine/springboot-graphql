@@ -4,17 +4,17 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>metadata-graphql</artifactId>
+  <artifactId>agile</artifactId>
   <packaging>pom</packaging>
   <modules>
     <module>starter-test</module>
-    <module>spring-boot-starter-metadata</module>
+    <module>spring-boot-starter-agile</module>
     <module>starter-test2</module>
     <module>starter-extendtest</module>
   </modules>
   <groupId>com.github.pkuliuqiang</groupId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>metadata-graphql</name>
+  <name>agile</name>
 
   <!-- Spring Boot 启动父依赖 -->
   <parent>
