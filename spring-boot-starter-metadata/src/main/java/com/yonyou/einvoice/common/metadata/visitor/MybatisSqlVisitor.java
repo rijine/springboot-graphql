@@ -75,10 +75,19 @@ public class MybatisSqlVisitor extends BaseSqlVisitor {
         || OperatorEnum.GREATEREQUAL.equals(operatorEnum)
         || OperatorEnum.LIKE.equals(operatorEnum);
     if (strOperator && (condition.getV1() == null || condition.getV1().getVal() == null)
-        && condition.getV1().getField() == null) {
+        && (condition.getV1() == null || condition.getV1().getField() == null)) {
       throw new RuntimeException("null值不能使用=、<>、!=、<、<=、>、>=、like操作符，请检查");
 //      append(OperatorEnum.ISNULL.getCode());
 //      return;
+    }
+    if (OperatorEnum.LIKE.equals(operatorEnum)) {
+      if (condition.getV1() != null) {
+        String val = condition.getV1().getVal();
+        // 如果val不是null，并且没有以%开头或结尾，并且%符号并没有出现在val中间，则在首、尾添加"%"
+        if (val != null && !val.startsWith("%") && !val.endsWith("%") && val.indexOf("%") == -1) {
+          condition.getV1().setVal("%" + val + "%");
+        }
+      }
     }
     append(operatorEnum.getCode());
     if (condition.getV1() != null) {

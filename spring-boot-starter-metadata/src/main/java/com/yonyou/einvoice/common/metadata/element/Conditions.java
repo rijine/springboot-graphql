@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 
 public class Conditions implements IMetaElement {
@@ -217,31 +216,28 @@ public class Conditions implements IMetaElement {
     }
 
     public ConditionsBuilder like(String strValue) {
-      tmpCondition.setOperator(OperatorEnum.LIKE);
-      if (StringUtils.isEmpty(strValue)) {
-        this.strValue("%%");
-        return this;
+      if (strValue == null) {
+        throw new RuntimeException("使用like语句，参数strValue不能为null!");
       }
-      this.strValue("%" + strValue + "%");
+      tmpCondition.setOperator(OperatorEnum.LIKE);
+      this.strValue(strValue);
       return this;
     }
 
     public ConditionsBuilder likeStart(String strValue) {
-      tmpCondition.setOperator(OperatorEnum.LIKE);
-      if (StringUtils.isEmpty(strValue)) {
-        this.strValue("%%");
-        return this;
+      if (strValue == null) {
+        throw new RuntimeException("使用like语句，参数strValue不能为null!");
       }
+      tmpCondition.setOperator(OperatorEnum.LIKE);
       this.strValue(strValue + "%");
       return this;
     }
 
     public ConditionsBuilder likeEnd(String strValue) {
-      tmpCondition.setOperator(OperatorEnum.LIKE);
-      if (StringUtils.isEmpty(strValue)) {
-        this.strValue("%%");
-        return this;
+      if (strValue == null) {
+        throw new RuntimeException("使用like语句，参数strValue不能为null!");
       }
+      tmpCondition.setOperator(OperatorEnum.LIKE);
       this.strValue("%" + strValue);
       return this;
     }

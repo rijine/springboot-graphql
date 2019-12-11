@@ -19,7 +19,7 @@ public class ConditionsTest {
     Assert.assertEquals("{_p1=123}", sqlVisitor.getMybatisParamMap().toString());
   }
 
-  @Test
+  @Test(expected = Exception.class)
   public void equalNullTest() {
     Conditions conditions = Conditions.builder()
         .field("t0", "id").eq(null)
@@ -29,7 +29,7 @@ public class ConditionsTest {
     Assert.assertEquals("{}", sqlVisitor.getMybatisParamMap().toString());
   }
 
-  @Test
+  @Test(expected = Exception.class)
   public void and1Test() {
     Conditions conditions = Conditions.builder()
         .field("t0", "id").eq(null)
@@ -40,7 +40,7 @@ public class ConditionsTest {
     Assert.assertEquals("{}", sqlVisitor.getMybatisParamMap().toString());
   }
 
-  @Test
+  @Test(expected = Exception.class)
   public void and2Test() {
     Conditions conditions = Conditions.builder()
         .andStart()
@@ -53,7 +53,7 @@ public class ConditionsTest {
     Assert.assertEquals("{}", sqlVisitor.getMybatisParamMap().toString());
   }
 
-  @Test
+  @Test(expected = Exception.class)
   public void and3Test() {
     Conditions conditions = Conditions.builder()
         .andStart()
@@ -125,7 +125,7 @@ public class ConditionsTest {
     MybatisSqlVisitor sqlVisitor = getSqlVisitor(conditions);
   }
 
-  @Test
+  @Test(expected = Exception.class)
   public void likeEmptyTest() {
     Conditions conditions = Conditions.builder()
         .field("t0", "id").like(null)
@@ -136,6 +136,16 @@ public class ConditionsTest {
         "where t0.`id` like #{_p1} and t0.`id` like #{_p2}",
         sqlVisitor.getSql());
     Assert.assertEquals("{_p2=%1%, _p1=%%}", sqlVisitor.getMybatisParamMap().toString());
+  }
+
+  @Test
+  public void likeTest() {
+    Conditions conditions = Conditions.builder()
+        .field("t0", "id").like("1")
+        .build();
+    MybatisSqlVisitor sqlVisitor = getSqlVisitor(conditions);
+    Assert.assertEquals("where t0.`id` like #{_p1}", sqlVisitor.getSql());
+    Assert.assertEquals("{_p1=%1%}", sqlVisitor.getMybatisParamMap().toString());
   }
 
   @Test

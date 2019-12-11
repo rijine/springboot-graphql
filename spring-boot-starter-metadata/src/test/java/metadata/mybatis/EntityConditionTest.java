@@ -21,7 +21,7 @@ public class EntityConditionTest {
     Assert.assertEquals("{_p1=123}", sqlVisitor.getMybatisParamMap().toString());
   }
 
-  @Test
+  @Test(expected = Exception.class)
   public void equalNullTest() {
     EntityCondition sourceCondition = EntityCondition.builder()
         .where()
@@ -33,7 +33,7 @@ public class EntityConditionTest {
   }
 
 
-  @Test
+  @Test(expected = Exception.class)
   public void and1Test() {
     EntityCondition sourceCondition = EntityCondition.builder()
         .where()
@@ -45,7 +45,7 @@ public class EntityConditionTest {
     Assert.assertEquals("{}", sqlVisitor.getMybatisParamMap().toString());
   }
 
-  @Test
+  @Test(expected = Exception.class)
   public void and2Test() {
     EntityCondition sourceCondition = EntityCondition.builder()
         .where()
@@ -59,7 +59,7 @@ public class EntityConditionTest {
     Assert.assertEquals("{}", sqlVisitor.getMybatisParamMap().toString());
   }
 
-  @Test
+  @Test(expected = Exception.class)
   public void and3Test() {
     EntityCondition sourceCondition = EntityCondition.builder()
         .where()
