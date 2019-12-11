@@ -1,7 +1,7 @@
 package com.github.einvoice.testcase.einvoicehis.service;
 
 import com.github.einvoice.testcase.einvoicehis.entity.EinvoiceHisVO;
-import com.yonyou.einvoice.common.metadata.service.IMybatisService;
+import com.yonyou.einvoice.common.agile.service.IMybatisService;
 
 
 /**

@@ -1,8 +1,8 @@
 package com.yonyou.einvoice.extend;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.yonyou.einvoice.common.metadata.element.EntityCondition;
-import com.yonyou.einvoice.common.metadata.graphql.IGraphQLService;
+import com.yonyou.einvoice.common.agile.element.EntityCondition;
+import com.yonyou.einvoice.common.agile.graphql.IGraphQLService;
 import com.yonyou.einvoice.extend.einvoicehis.entity.EinvoiceHisVO;
 import com.yonyou.einvoice.extend.einvoicehis.service.IEinvoiceHisVOService;
 import com.yonyou.einvoice.extend.einvoicehisb.entity.EinvoiceHisBVO;

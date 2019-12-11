@@ -1,7 +1,7 @@
 package com.github.einvoice.testcase.einvoicehisb.repository;
 
 import com.github.einvoice.testcase.einvoicehisb.entity.EinvoiceHisBVO;
-import com.yonyou.einvoice.common.metadata.mp.repository.IMetaMapper;
+import com.yonyou.einvoice.common.agile.mp.repository.IMetaMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

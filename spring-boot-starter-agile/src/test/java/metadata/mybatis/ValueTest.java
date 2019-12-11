@@ -1,7 +1,7 @@
 package metadata.mybatis;
 
-import com.yonyou.einvoice.common.metadata.element.Value;
-import com.yonyou.einvoice.common.metadata.visitor.MybatisSqlVisitor;
+import com.yonyou.einvoice.common.agile.element.Value;
+import com.yonyou.einvoice.common.agile.visitor.MybatisSqlVisitor;
 import metadata.Utils;
 import org.junit.Assert;
 import org.junit.Test;

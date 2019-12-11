@@ -3,7 +3,7 @@ package com.github.einvoice.testcase.einvoicehisb.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.yonyou.einvoice.common.metadata.mp.anno.InsertBatchIgnore;
+import com.yonyou.einvoice.common.agile.mp.anno.InsertBatchIgnore;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import java.math.BigDecimal;
 import java.util.Date;

@@ -1,10 +1,10 @@
 package metadata.base;
 
-import com.yonyou.einvoice.common.metadata.element.Aggr;
-import com.yonyou.einvoice.common.metadata.element.Orderby;
-import com.yonyou.einvoice.common.metadata.element.Orderbyitem;
-import com.yonyou.einvoice.common.metadata.visitor.BaseSqlVisitor;
-import com.yonyou.einvoice.common.metadata.visitor.MybatisSqlVisitor;
+import com.yonyou.einvoice.common.agile.element.Aggr;
+import com.yonyou.einvoice.common.agile.element.Orderby;
+import com.yonyou.einvoice.common.agile.element.Orderbyitem;
+import com.yonyou.einvoice.common.agile.visitor.BaseSqlVisitor;
+import com.yonyou.einvoice.common.agile.visitor.MybatisSqlVisitor;
 import metadata.Utils;
 import org.junit.Assert;
 import org.junit.Test;

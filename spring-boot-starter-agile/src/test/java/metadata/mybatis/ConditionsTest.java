@@ -1,7 +1,7 @@
 package metadata.mybatis;
 
-import com.yonyou.einvoice.common.metadata.element.Conditions;
-import com.yonyou.einvoice.common.metadata.visitor.MybatisSqlVisitor;
+import com.yonyou.einvoice.common.agile.element.Conditions;
+import com.yonyou.einvoice.common.agile.visitor.MybatisSqlVisitor;
 import java.util.Arrays;
 import java.util.Collections;
 import org.junit.Assert;

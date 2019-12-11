@@ -1,7 +1,7 @@
 package com.yonyou.einvoice.extend.einvoicehisext.repository;
 
-import com.yonyou.einvoice.common.metadata.mp.anno.ExtensionMeta;
-import com.yonyou.einvoice.common.metadata.mp.repository.IExtendMetaMapper;
+import com.yonyou.einvoice.common.agile.mp.anno.ExtensionMeta;
+import com.yonyou.einvoice.common.agile.mp.repository.IExtendMetaMapper;
 import com.yonyou.einvoice.extend.einvoicehis.entity.EinvoiceHisVO;
 import com.yonyou.einvoice.extend.einvoicehisext.entity.EinvoiceHisExtVO;
 import org.apache.ibatis.annotations.Mapper;

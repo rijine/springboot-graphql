@@ -1,10 +1,10 @@
 package metadata.base;
 
-import com.yonyou.einvoice.common.metadata.element.Entity;
-import com.yonyou.einvoice.common.metadata.element.Join;
-import com.yonyou.einvoice.common.metadata.element.On;
-import com.yonyou.einvoice.common.metadata.visitor.BaseSqlVisitor;
-import com.yonyou.einvoice.common.metadata.visitor.MybatisSqlVisitor;
+import com.yonyou.einvoice.common.agile.element.Entity;
+import com.yonyou.einvoice.common.agile.element.Join;
+import com.yonyou.einvoice.common.agile.element.On;
+import com.yonyou.einvoice.common.agile.visitor.BaseSqlVisitor;
+import com.yonyou.einvoice.common.agile.visitor.MybatisSqlVisitor;
 import metadata.Utils;
 import org.junit.Assert;
 import org.junit.Test;

@@ -1,7 +1,7 @@
 package metadata.base;
 
-import com.yonyou.einvoice.common.metadata.element.Limit;
-import com.yonyou.einvoice.common.metadata.visitor.BaseSqlVisitor;
+import com.yonyou.einvoice.common.agile.element.Limit;
+import com.yonyou.einvoice.common.agile.visitor.BaseSqlVisitor;
 import org.junit.Assert;
 import org.junit.Test;
 

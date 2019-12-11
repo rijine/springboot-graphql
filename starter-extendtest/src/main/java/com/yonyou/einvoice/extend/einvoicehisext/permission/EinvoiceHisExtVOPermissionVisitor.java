@@ -1,6 +1,6 @@
 package com.yonyou.einvoice.extend.einvoicehisext.permission;
 
-import com.yonyou.einvoice.common.metadata.visitor.AbstractPermissionVisitor;
+import com.yonyou.einvoice.common.agile.visitor.AbstractPermissionVisitor;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.stereotype.Component;

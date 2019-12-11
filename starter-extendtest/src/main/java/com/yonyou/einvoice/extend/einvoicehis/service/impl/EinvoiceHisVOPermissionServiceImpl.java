@@ -1,6 +1,6 @@
 package com.yonyou.einvoice.extend.einvoicehis.service.impl;
 
-import com.yonyou.einvoice.common.metadata.service.AbstractMybatisPermissionService;
+import com.yonyou.einvoice.common.agile.service.AbstractMybatisPermissionService;
 import com.yonyou.einvoice.extend.einvoicehis.entity.EinvoiceHisVO;
 import com.yonyou.einvoice.extend.einvoicehis.repository.EinvoiceHisVOMapper;
 import com.yonyou.einvoice.extend.einvoicehis.service.IEinvoiceHisVOService;

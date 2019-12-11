@@ -1,8 +1,8 @@
 package com.yonyou.einvoice.testcase;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.yonyou.einvoice.common.metadata.element.EntityCondition;
-import com.yonyou.einvoice.common.metadata.graphql.IGraphQLService;
+import com.yonyou.einvoice.common.agile.element.EntityCondition;
+import com.yonyou.einvoice.common.agile.graphql.IGraphQLService;
 import com.yonyou.einvoice.testcase.einvoicehis.entity.EinvoiceHisVO;
 import com.yonyou.einvoice.testcase.einvoicehis.service.IEinvoiceHisVOService;
 import com.yonyou.einvoice.testcase.einvoicehisb.entity.EinvoiceHisBVO;

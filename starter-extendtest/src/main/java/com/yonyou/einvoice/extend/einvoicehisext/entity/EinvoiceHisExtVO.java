@@ -2,7 +2,7 @@ package com.yonyou.einvoice.extend.einvoicehisext.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.yonyou.einvoice.common.metadata.mp.anno.InsertBatchIgnore;
+import com.yonyou.einvoice.common.agile.mp.anno.InsertBatchIgnore;
 import com.yonyou.einvoice.extend.einvoicehis.entity.EinvoiceHisVO;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import java.util.Date;

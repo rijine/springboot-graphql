@@ -1,8 +1,8 @@
 package metadata.base;
 
-import com.yonyou.einvoice.common.metadata.element.Field;
-import com.yonyou.einvoice.common.metadata.element.Fields;
-import com.yonyou.einvoice.common.metadata.visitor.BaseSqlVisitor;
+import com.yonyou.einvoice.common.agile.element.Field;
+import com.yonyou.einvoice.common.agile.element.Fields;
+import com.yonyou.einvoice.common.agile.visitor.BaseSqlVisitor;
 import metadata.Utils;
 import org.junit.Assert;
 import org.junit.Test;

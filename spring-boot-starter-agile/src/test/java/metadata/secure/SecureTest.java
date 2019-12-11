@@ -1,8 +1,8 @@
 package metadata.secure;
 
-import com.yonyou.einvoice.common.metadata.element.Condition;
-import com.yonyou.einvoice.common.metadata.element.Field;
-import com.yonyou.einvoice.common.metadata.visitor.SecureVisitor;
+import com.yonyou.einvoice.common.agile.element.Condition;
+import com.yonyou.einvoice.common.agile.element.Field;
+import com.yonyou.einvoice.common.agile.visitor.SecureVisitor;
 import org.junit.Test;
 
 public class SecureTest {

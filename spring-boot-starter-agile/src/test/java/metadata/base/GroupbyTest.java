@@ -1,7 +1,7 @@
 package metadata.base;
 
-import com.yonyou.einvoice.common.metadata.element.Groupby;
-import com.yonyou.einvoice.common.metadata.visitor.BaseSqlVisitor;
+import com.yonyou.einvoice.common.agile.element.Groupby;
+import com.yonyou.einvoice.common.agile.visitor.BaseSqlVisitor;
 import metadata.Utils;
 import org.junit.Assert;
 import org.junit.Test;

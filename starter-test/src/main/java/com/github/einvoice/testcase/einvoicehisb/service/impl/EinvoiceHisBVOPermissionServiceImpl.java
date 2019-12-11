@@ -3,7 +3,7 @@ package com.github.einvoice.testcase.einvoicehisb.service.impl;
 import com.github.einvoice.testcase.einvoicehisb.entity.EinvoiceHisBVO;
 import com.github.einvoice.testcase.einvoicehisb.repository.EinvoiceHisBVOMapper;
 import com.github.einvoice.testcase.einvoicehisb.service.IEinvoiceHisBVOService;
-import com.yonyou.einvoice.common.metadata.service.AbstractMybatisPermissionService;
+import com.yonyou.einvoice.common.agile.service.AbstractMybatisPermissionService;
 import org.springframework.stereotype.Service;
 
 

@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yonyou.einvoice.Application;
-import com.yonyou.einvoice.common.metadata.element.EntityCondition;
+import com.yonyou.einvoice.common.agile.element.EntityCondition;
+import com.yonyou.einvoice.common.agile.visitor.MybatisSqlVisitor;
 import com.yonyou.einvoice.extend.einvoicehis.entity.EinvoiceHisVO;
 import com.yonyou.einvoice.extend.einvoicehis.repository.EinvoiceHisVOMapper;
 import com.yonyou.einvoice.extend.einvoicehis.service.impl.EinvoiceHisVOPermissionServiceImpl;
@@ -101,7 +102,7 @@ public class ExtPermissionTest {
     ((EinvoiceHisExtVO) einvoiceHisVO).setExtId(id);
     Assert.assertTrue(einvoiceHisVO instanceof EinvoiceHisExtVO);
     checkResult(
-        "{\"bmbBbh\":\"10.0\",\"creator\":\"~\",\"extTenantid\":\"jowol828\",\"fpjz\":\"0\",\"fplx\":\"0\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"jowol828\",\"tschbz\":\"0\",\"zfbz\":\"N\",\"zsfs\":\"0\"}",
+        "{\"bmbBbh\":\"10.0\",\"creator\":\"~\",\"einvoiceHisBVOList\":[],\"extTenantid\":\"jowol828\",\"fpjz\":\"0\",\"fplx\":\"0\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"jowol828\",\"tschbz\":\"0\",\"zfbz\":\"N\",\"zsfs\":\"0\"}",
         einvoiceHisVO);
   }
 
@@ -114,7 +115,7 @@ public class ExtPermissionTest {
       ((EinvoiceHisExtVO) einvoiceHisVO).setExtId(id);
     });
     checkResult(
-        "[{\"bmbBbh\":\"10.0\",\"creator\":\"~\",\"extTenantid\":\"jowol828\",\"fpjz\":\"0\",\"fplx\":\"0\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"jowol828\",\"tschbz\":\"0\",\"zfbz\":\"N\",\"zsfs\":\"0\"},{\"extTenantid\":\"jowol828\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"jowol828\"}]",
+        "[{\"bmbBbh\":\"10.0\",\"creator\":\"~\",\"einvoiceHisBVOList\":[],\"extTenantid\":\"jowol828\",\"fpjz\":\"0\",\"fplx\":\"0\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"jowol828\",\"tschbz\":\"0\",\"zfbz\":\"N\",\"zsfs\":\"0\"},{\"einvoiceHisBVOList\":[],\"extTenantid\":\"jowol828\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"jowol828\"}]",
         einvoiceHisVOList);
   }
 
@@ -129,7 +130,7 @@ public class ExtPermissionTest {
       ((EinvoiceHisExtVO) einvoiceHisVO).setExtId(id);
     });
     checkResult(
-        "[{\"bmbBbh\":\"10.0\",\"creator\":\"~\",\"extTenantid\":\"jowol828\",\"fpjz\":\"0\",\"fplx\":\"0\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"jowol828\",\"tschbz\":\"0\",\"zfbz\":\"N\",\"zsfs\":\"0\"},{\"extTenantid\":\"jowol828\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"jowol828\"}]",
+        "[{\"bmbBbh\":\"10.0\",\"creator\":\"~\",\"einvoiceHisBVOList\":[],\"extTenantid\":\"jowol828\",\"fpjz\":\"0\",\"fplx\":\"0\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"jowol828\",\"tschbz\":\"0\",\"zfbz\":\"N\",\"zsfs\":\"0\"},{\"einvoiceHisBVOList\":[],\"extTenantid\":\"jowol828\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"jowol828\"}]",
         einvoiceHisVOList);
   }
 
@@ -171,7 +172,8 @@ public class ExtPermissionTest {
   @Test
   public void test007SelectMaps() {
     List<Map<String, Object>> result = einvoiceHisVOService.selectMaps(queryWrapper);
-    checkMapList(result, 0);
+    Assert.assertNotNull(result);
+    Assert.assertEquals(0, result.size());
   }
 
   @Test
@@ -180,18 +182,6 @@ public class ExtPermissionTest {
         .selectMapsPage(new Page<>(), queryWrapper);
     Assert.assertNotNull(page);
     Assert.assertNotNull(page.getRecords());
-    page.getRecords().forEach(map -> {
-      Assert.assertTrue(map.containsKey("id"));
-      Assert.assertTrue(map.containsKey("ts"));
-      Assert.assertTrue(map.containsKey("ext_id"));
-      Assert.assertTrue(map.containsKey("ext_ts"));
-      Assert.assertTrue(map.containsKey("createtime"));
-      map.remove("id");
-      map.remove("ts");
-      map.remove("ext_id");
-      map.remove("ext_ts");
-      map.remove("createtime");
-    });
     System.out.println(JSON.toJSONString(page.getRecords()));
   }
 
@@ -260,6 +250,30 @@ public class ExtPermissionTest {
         .build();
     List<EinvoiceHisVO> einvoiceHisVOList = einvoiceHisVOService
         .selectByDynamicCondition(sourceCondition, Collections.emptyList());
+    Assert.assertNotNull(einvoiceHisVOList);
+    Assert.assertEquals(0, einvoiceHisVOList.size());
+    checkEntityList(einvoiceHisVOList, 0);
+  }
+
+  /**
+   * 主子查询。一条sql查出主、子数据，并进行拼接。 由于最早insert的数据无子表数据，所以此处查子表并不会有任何数据。
+   */
+  @Test
+  public void test014SelectWithRelationByDynamicCondition() {
+    EntityCondition sourceCondition = EntityCondition.builder()
+        .innerJoin("einvoice_his_b", "t1").on("t0", "id", "t1", "hid")
+        .where()
+        .field("t0", "fpqqlsh").eq(fpqqlsh)
+        .field("t0", "tenantid").eq(tenantid)
+        .field("t0", "ext_tenantid").eq(tenantid)
+        .build();
+    MybatisSqlVisitor visitor = new MybatisSqlVisitor();
+    visitor.visit(sourceCondition);
+    Assert.assertEquals(
+        "inner join einvoice_his_b t1 on t0.`id` = t1.`hid` where t0.`fpqqlsh` = #{_p1} and t0.`tenantid` = #{_p2} and t0.`ext_tenantid` = #{_p3}",
+        visitor.getSql());
+    List<EinvoiceHisVO> einvoiceHisVOList = einvoiceHisVOService
+        .selectWithRelationByDynamicCondition(sourceCondition);
     Assert.assertNotNull(einvoiceHisVOList);
     Assert.assertEquals(0, einvoiceHisVOList.size());
     checkEntityList(einvoiceHisVOList, 0);

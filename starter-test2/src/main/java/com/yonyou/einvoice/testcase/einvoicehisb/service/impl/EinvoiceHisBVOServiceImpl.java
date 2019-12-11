@@ -1,6 +1,6 @@
 package com.yonyou.einvoice.testcase.einvoicehisb.service.impl;
 
-import com.yonyou.einvoice.common.metadata.service.AbstractMybatisService;
+import com.yonyou.einvoice.common.agile.service.AbstractMybatisService;
 import com.yonyou.einvoice.testcase.einvoicehisb.entity.EinvoiceHisBVO;
 import com.yonyou.einvoice.testcase.einvoicehisb.repository.EinvoiceHisBVOMapper;
 import com.yonyou.einvoice.testcase.einvoicehisb.service.IEinvoiceHisBVOService;

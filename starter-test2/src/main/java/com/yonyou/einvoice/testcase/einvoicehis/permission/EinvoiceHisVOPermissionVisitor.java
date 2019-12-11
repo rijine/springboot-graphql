@@ -1,6 +1,6 @@
 package com.yonyou.einvoice.testcase.einvoicehis.permission;
 
-import com.yonyou.einvoice.common.metadata.visitor.AbstractPermissionVisitor;
+import com.yonyou.einvoice.common.agile.visitor.AbstractPermissionVisitor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
