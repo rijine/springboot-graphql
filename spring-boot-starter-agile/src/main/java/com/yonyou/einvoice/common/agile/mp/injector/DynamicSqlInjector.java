@@ -136,8 +136,6 @@ public class DynamicSqlInjector extends DefaultSqlInjector {
         cacheTableInfo(tableInfo);
         // 循环注入自定义方法
         methodList.forEach(m -> m.inject(builderAssistant, mapperClass, modelClass, tableInfo));
-        methodList = super.getMethodList(modelClass);
-        methodList.forEach(m -> m.inject(builderAssistant, mapperClass, modelClass, tableInfo));
       } else {
         log.info(mapperClass.toString() + ", No effective injection method was found.");
       }

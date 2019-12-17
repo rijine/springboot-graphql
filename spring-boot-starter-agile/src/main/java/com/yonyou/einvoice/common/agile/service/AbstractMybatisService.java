@@ -41,6 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -111,7 +112,8 @@ public class AbstractMybatisService<T, Q extends IMetaMapper> extends
 
   private int parentKeyFieldIndex;
 
-  private boolean firstInit = true;
+  //  @Autowired
+  protected static final Set<ResultMap> resultMapSet = new HashSet<>();
 
   /**
    * 用于保存T数据类型的 数据库字段 -> java属性字段映射
@@ -137,9 +139,7 @@ public class AbstractMybatisService<T, Q extends IMetaMapper> extends
 
   @Autowired
   protected ApplicationContext applicationContext;
-
-  @Autowired
-  protected static final Set<ResultMap> resultMapSet = new HashSet<>();
+  private volatile boolean firstInit = true;
 
 
   /**
@@ -941,5 +941,12 @@ public class AbstractMybatisService<T, Q extends IMetaMapper> extends
       lists.add(list.subList(start, end));
     }
     return lists;
+  }
+
+  @PostConstruct
+  public void postInit() {
+    log.info("serviceImpl: {} init method called.",
+        this.getClass().getName());
+    init();
   }
 }
