@@ -46,7 +46,7 @@ graphql接口默认分为两类：
 ![示例.png](https://i.loli.net/2019/11/08/JksDrut61OZ9wXW.png)
 或打开graphql playground工具，输入:
 ```
-http://localhost:8080/graphql
+http://localhost:8080/onlineql
 ```
 
 界面如下：
