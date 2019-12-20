@@ -168,11 +168,7 @@ mutation deleteListWithPermission {
           "field2": "hid"
         }
       }
-    ],
-    "limit": {
-      "pageIndex": 1,
-      "size": 5
-    }
+    ]
   },
   "condition": {
     "conditions": {
