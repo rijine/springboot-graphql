@@ -32,11 +32,15 @@ public class SelectDynamicMethod extends AbstractMethod {
         + "      ${item}\n"
         + "    </foreach>\n"
         + " </when>\n"
+        + " <otherwise>\n"
+        + "%s \n"
+        + " </otherwise>\n"
         + "</choose>\n"
         + "from %s t0\n"
         + "${conditionSql}\n"
         + "</script>";
-    sql = String.format(sql, tableInfo.getTableName());
+    String selectFields = sqlSelectColumns(tableInfo, false);
+    sql = String.format(sql, selectFields, tableInfo.getTableName());
     SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
     return this.addSelectMappedStatementForTable(mapperClass, "selectByDynamicCondition", sqlSource,
         tableInfo);

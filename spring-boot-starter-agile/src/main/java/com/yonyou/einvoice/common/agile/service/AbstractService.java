@@ -69,7 +69,7 @@ public abstract class AbstractService<T, Q extends IMetaMapper> extends Abstract
 
   protected List<T> innerSelect(EntityCondition condition, List<String> selectFields) {
     Map<String, Object> map = new TreeMap<>();
-    List<String> fields = new ArrayList<>(selectFields.size());
+    List<String> fields = new ArrayList<>();
     if (!CollectionUtils.isEmpty(selectFields) && extendMapper != null) {
       selectFields.forEach(selectField -> {
         String field = selectField.substring(1, selectField.length() - 1);
