@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import com.yonyou.einvoice.common.agile.entity.IAgileEntity;
 import com.yonyou.einvoice.common.agile.enums.DirectionEnum;
 import com.yonyou.einvoice.common.agile.enums.JointypeEnum;
@@ -13,6 +12,8 @@ import com.yonyou.einvoice.common.agile.visitor.IMetaElement;
 import com.yonyou.einvoice.common.agile.visitor.IVisitor;
 import io.leangen.graphql.annotations.GraphQLIgnore;
 import io.leangen.graphql.annotations.types.GraphQLType;
+import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -912,20 +913,45 @@ public class EntityCondition implements IMetaElement {
 
   /**
    * 从lambda表达式中解析出column名称并返回
-   * TODO
    * @param sFunction
    * @return
    */
   private static String getColumnFromSFunction(SFunction sFunction) {
-    SerializedLambda serializedLambda = LambdaUtils.resolve(sFunction);
+    SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
     String fieldName = PropertyNamer.methodToProperty(serializedLambda.getImplMethodName());
-    Class aClass = serializedLambda.getInstantiatedMethodType();
+    Class aClass = getImplClassFromSerializedLambda(serializedLambda);
     Map<String, ColumnCache> columnCacheMap = LambdaUtils.getColumnMap(aClass);
     ColumnCache columnCache = columnCacheMap.get(LambdaUtils.formatKey(fieldName));
     Assert.notNull(columnCache, "can not find lambda cache for this property [%s] of entity [%s]",
         fieldName, aClass.getName());
     String column = columnCache.getColumn();
     return column;
+  }
+
+  private static Class getImplClassFromSerializedLambda(SerializedLambda serializedLambda) {
+    String implClassName = serializedLambda.getImplClass();
+    implClassName = implClassName.replaceAll("/", ".").replaceAll("\\\\", ".");
+    Class aClass = null;
+    try {
+      aClass = Class.forName(implClassName);
+    }
+    catch (ClassNotFoundException e) {
+      e.printStackTrace();
+    }
+    return aClass;
+  }
+
+  private static SerializedLambda getSerializedLambdaFromSFunction(SFunction function) {
+    SerializedLambda serializedLambda = null;
+    try {
+      Method method = function.getClass().getDeclaredMethod("writeReplace");
+      method.setAccessible(Boolean.TRUE);
+      serializedLambda = (SerializedLambda) method.invoke(function);
+      return serializedLambda;
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
   public static class EntityConditionBuilder {
