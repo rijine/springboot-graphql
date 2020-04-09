@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.google.common.base.Objects;
 import com.yonyou.einvoice.common.agile.entity.IAgileEntity;
 import com.yonyou.einvoice.common.agile.enums.DirectionEnum;
 import com.yonyou.einvoice.common.agile.enums.JointypeEnum;
@@ -95,23 +96,682 @@ public class EntityCondition implements IMetaElement {
   }
 
   @GraphQLIgnore
-  public static <T extends IAgileEntity> OneEntityConditionBuilder<T> oneEntityBuilder(Class<T> clazz) {
+  public static <T extends IAgileEntity> OneEntityConditionBuilder<T> oneEntityConditionBuilder(
+      Class<T> clazz) {
     return new OneEntityConditionBuilder<T>();
   }
 
-  public static class TwoEntityConditionBuilder<T extends IAgileEntity, U extends IAgileEntity> extends EntityConditionBuilder {
+  @GraphQLIgnore
+  public static <T extends IAgileEntity, U extends IAgileEntity> TwoEntityConditionBuilder<T, U> twoEntityConditionBuilder(
+      Class<T> tClazz, Class<U> uClass) {
+    return new TwoEntityConditionBuilder<T, U>(tClazz, uClass);
+  }
 
-    protected TwoEntityConditionBuilder() {
+  @GraphQLIgnore
+  public static <T extends IAgileEntity, U extends IAgileEntity, S extends IAgileEntity> ThreeEntityConditionBuilder threeEntityConditionBuilder(
+      Class<T> tClass, Class<U> uClass, Class<S> sClass) {
+    return new ThreeEntityConditionBuilder(tClass, uClass, sClass);
+  }
 
+
+  public static class ThreeEntityConditionBuilder<T extends IAgileEntity, U extends IAgileEntity, S extends IAgileEntity> extends
+      EntityConditionBuilder {
+
+    private Class<T> tClass;
+    private Class<U> uClass;
+    private Class<S> sClass;
+
+    protected ThreeEntityConditionBuilder(Class<T> tClass, Class<U> uClass, Class<S> sClass) {
+      this.tClass = tClass;
+      this.uClass = uClass;
+      this.sClass = sClass;
+    }
+
+    public <R extends IAgileEntity> ThreeEntityConditionBuilder<T, U, S> innerJoin(
+        Class<R> rClass) {
+      if (Objects.equal(uClass, rClass)) {
+        this.innerJoin(IAgileEntity.getTableName(uClass), "t1");
+      } else if (Objects.equal(sClass, rClass)) {
+        this.innerJoin(IAgileEntity.getTableName(rClass), "t2");
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + rClass.getName() + "与泛型类：" + uClass.getName() + "/" + sClass
+                .getName() + "不一致");
+      }
+      return this;
+    }
+
+    public <R extends IAgileEntity> ThreeEntityConditionBuilder<T, U, S> leftJoin(Class<R> rClass) {
+      if (Objects.equal(uClass, rClass)) {
+        this.leftJoin(IAgileEntity.getTableName(uClass), "t1");
+      } else if (Objects.equal(sClass, rClass)) {
+        this.leftJoin(IAgileEntity.getTableName(rClass), "t2");
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + rClass.getName() + "与泛型类：" + uClass.getName() + "/" + sClass
+                .getName() + "不一致");
+      }
+      return this;
+    }
+
+    public <R extends IAgileEntity> ThreeEntityConditionBuilder<T, U, S> rightJoin(
+        Class<R> rClass) {
+      if (Objects.equal(uClass, rClass)) {
+        this.rightJoin(IAgileEntity.getTableName(uClass), "t1");
+      } else if (Objects.equal(sClass, rClass)) {
+        this.rightJoin(IAgileEntity.getTableName(rClass), "t2");
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + rClass.getName() + "与泛型类：" + uClass.getName() + "/" + sClass
+                .getName() + "不一致");
+      }
+      return this;
     }
 
     /**
      * 支持lambda表达式拼接on查询条件
+     *
      * @param sFunction1
      * @param sFunction2
      * @return
      */
-    public TwoEntityConditionBuilder<T, U> on(SFunction<T, ?> sFunction1, SFunction<U, ?> sFunction2) {
+    public <R extends IAgileEntity> ThreeEntityConditionBuilder<T, U, S> on(
+        SFunction<T, ?> sFunction1, SFunction<R, ?> sFunction2) {
+      String column1 = getColumnFromSFunction(sFunction1);
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction2);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column2 = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(uClass, clazz)) {
+        this.on("t0", column1, "t1", column2);
+      } else if (Objects.equal(sClass, clazz)) {
+        this.on("t0", column1, "t2", column2);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + uClass.getName() + "/" + sClass
+                .getName() + "不一致");
+      }
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定field条件
+     *
+     * @param sFunction
+     * @return
+     */
+    public <R extends IAgileEntity> ThreeEntityConditionBuilder<T, U, S> field(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.field("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.field("t1", column);
+      } else if (Objects.equal(sClass, clazz)) {
+        this.field("t2", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "/" + sClass.getName() + "不一致");
+      }
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定eq条件
+     *
+     * @param sFunction
+     * @return
+     */
+    public <R extends IAgileEntity> ThreeEntityConditionBuilder<T, U, S> eq(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.eq("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.eq("t1", column);
+      } else if (Objects.equal(sClass, clazz)) {
+        this.eq("t2", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "/" + sClass.getName() + "不一致");
+      }
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定notEq条件
+     *
+     * @param sFunction
+     * @return
+     */
+    public <R extends IAgileEntity> ThreeEntityConditionBuilder<T, U, S> notEq(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.notEq("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.notEq("t1", column);
+      } else if (Objects.equal(sClass, clazz)) {
+        this.notEq("t2", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "/" + sClass.getName() + "不一致");
+      }
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定greater条件
+     *
+     * @param sFunction
+     * @return
+     */
+    public <R extends IAgileEntity> ThreeEntityConditionBuilder<T, U, S> greater(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.greater("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.greater("t1", column);
+      } else if (Objects.equal(sClass, clazz)) {
+        this.greater("t2", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "/" + sClass.getName() + "不一致");
+      }
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定greater条件
+     *
+     * @param sFunction
+     * @return
+     */
+    public <R extends IAgileEntity> ThreeEntityConditionBuilder<T, U, S> less(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.less("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.less("t1", column);
+      } else if (Objects.equal(sClass, clazz)) {
+        this.less("t2", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "/" + sClass.getName() + "不一致");
+      }
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定greaterEqual条件
+     *
+     * @param sFunction
+     * @return
+     */
+    public <R extends IAgileEntity> ThreeEntityConditionBuilder<T, U, S> greaterEqual(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.greaterEqual("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.greaterEqual("t1", column);
+      } else if (Objects.equal(sClass, clazz)) {
+        this.greaterEqual("t2", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "/" + sClass.getName() + "不一致");
+      }
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定lessEqual条件
+     *
+     * @param sFunction
+     * @return
+     */
+    public <R extends IAgileEntity> ThreeEntityConditionBuilder<T, U, S> lessEqual(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.lessEqual("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.lessEqual("t1", column);
+      } else if (Objects.equal(sClass, clazz)) {
+        this.lessEqual("t2", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "/" + sClass.getName() + "不一致");
+      }
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定groupby条件
+     *
+     * @param sFunction
+     * @return
+     */
+    public <R extends IAgileEntity> ThreeEntityConditionBuilder<T, U, S> groupby(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.groupby("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.groupby("t1", column);
+      } else if (Objects.equal(sClass, clazz)) {
+        this.groupby("t2", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "/" + sClass.getName() + "不一致");
+      }
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定havingField条件
+     *
+     * @param sFunction
+     * @return
+     */
+    public <R extends IAgileEntity> ThreeEntityConditionBuilder<T, U, S> havingField(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.havingField("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.havingField("t1", column);
+      } else if (Objects.equal(sClass, clazz)) {
+        this.havingField("t2", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "/" + sClass.getName() + "不一致");
+      }
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定orderbyAsc条件
+     *
+     * @param sFunction
+     * @return
+     */
+    public <R extends IAgileEntity> ThreeEntityConditionBuilder<T, U, S> orderbyAsc(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.orderbyAsc("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.orderbyAsc("t1", column);
+      } else if (Objects.equal(sClass, clazz)) {
+        this.orderbyAsc("t2", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "/" + sClass.getName() + "不一致");
+      }
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定orderByDesc条件
+     *
+     * @param sFunction
+     * @return
+     */
+    public <R extends IAgileEntity> ThreeEntityConditionBuilder<T, U, S> orderByDesc(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.orderByDesc("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.orderByDesc("t1", column);
+      } else if (Objects.equal(sClass, clazz)) {
+        this.orderByDesc("t2", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "/" + sClass.getName() + "不一致");
+      }
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> distinct(Boolean distinct) {
+      super.distinct(distinct);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> innerJoin(String target, String alias) {
+      super.innerJoin(target, alias);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> leftJoin(String target, String alias) {
+      super.leftJoin(target, alias);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> rightJoin(String target, String alias) {
+      super.rightJoin(target, alias);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> on(String sourceAlias1, String field1,
+        String sourceAlias2,
+        String field2) {
+      super.on(sourceAlias1, field1, sourceAlias2, field2);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> where() {
+      super.where();
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> andStart() {
+      super.andStart();
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> andEnd() {
+      super.andEnd();
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> orStart() {
+      super.orStart();
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> orEnd() {
+      super.orEnd();
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> field(String sourceAlias, String sourceField) {
+      super.field(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> eq(String strValue) {
+      super.eq(strValue);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> eq(String sourceAlias, String sourceField) {
+      super.eq(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> notEq(String strValue) {
+      super.notEq(strValue);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> notEq(String sourceAlias, String sourceField) {
+      super.notEq(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> greater(String strValue) {
+      super.greater(strValue);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> greater(String sourceAlias, String sourceField) {
+      super.greater(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> less(String strValue) {
+      super.less(strValue);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> less(String sourceAlias, String sourceField) {
+      super.less(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> greaterEqual(String strValue) {
+      super.greaterEqual(strValue);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> greaterEqual(String sourceAlias,
+        String sourceField) {
+      super.greaterEqual(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> lessEqual(String strValue) {
+      super.lessEqual(strValue);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> lessEqual(String sourceAlias, String sourceField) {
+      super.lessEqual(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> like(String strValue) {
+      super.like(strValue);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> likeStart(String strValue) {
+      super.likeStart(strValue);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> likeEnd(String strValue) {
+      super.likeEnd(strValue);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> in(List list) {
+      super.in(list);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> in(Collection list) {
+      super.in(list);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> notIn(List list) {
+      super.notIn(list);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> notIn(Collection list) {
+      super.notIn(list);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> isNull() {
+      super.isNull();
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> isNotNull() {
+      super.isNotNull();
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> between(String strValue1, String strValue2) {
+      super.between(strValue1, strValue2);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> groupby(String sourceAlias, String field) {
+      super.groupby(sourceAlias, field);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> page(Integer pageIndex, Integer size) {
+      super.page(pageIndex, size);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> limit(Integer offset, Integer size) {
+      super.limit(offset, size);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> havingField(String sourceAlias,
+        String sourceField) {
+      super.havingField(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> havingOperator(OperatorEnum operatorEnum) {
+      super.havingOperator(operatorEnum);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> havingStrValue(String strValue) {
+      super.havingStrValue(strValue);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> havingStrValue(String strValue1, String strValue2) {
+      super.havingStrValue(strValue1, strValue2);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> havingListValue(String strValue) {
+      super.havingListValue(strValue);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> orderbyAsc(String sourceAlias, String sourceField) {
+      super.orderbyAsc(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public ThreeEntityConditionBuilder<T, U, S> orderByDesc(String sourceAlias,
+        String sourceField) {
+      super.orderByDesc(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public EntityCondition build() {
+      return super.build();
+    }
+  }
+
+  public static class TwoEntityConditionBuilder<T extends IAgileEntity, U extends IAgileEntity> extends
+      EntityConditionBuilder {
+
+    private Class<T> tClass;
+    private Class<U> uClass;
+
+    protected TwoEntityConditionBuilder(Class<T> tClass, Class<U> uClass) {
+      this.tClass = tClass;
+      this.uClass = uClass;
+    }
+
+    public TwoEntityConditionBuilder<T, U> innerJoin(Class<U> uClass) {
+      this.innerJoin(IAgileEntity.getTableName(uClass), "t1");
+      return this;
+    }
+
+    public TwoEntityConditionBuilder<T, U> leftJoin(Class<U> uClass) {
+      this.leftJoin(IAgileEntity.getTableName(uClass), "t1");
+      return this;
+    }
+
+    public TwoEntityConditionBuilder<T, U> rightJoin(Class<U> uClass) {
+      this.rightJoin(IAgileEntity.getTableName(uClass), "t1");
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式拼接on查询条件
+     *
+     * @param sFunction1
+     * @param sFunction2
+     * @return
+     */
+    public TwoEntityConditionBuilder<T, U> on(SFunction<T, ?> sFunction1,
+        SFunction<U, ?> sFunction2) {
       String column1 = getColumnFromSFunction(sFunction1);
       String column2 = getColumnFromSFunction(sFunction2);
       this.on("t0", column1, "t1", column2);
@@ -120,122 +780,251 @@ public class EntityCondition implements IMetaElement {
 
     /**
      * 支持lambda表达式指定field条件
+     *
      * @param sFunction
      * @return
      */
-    public TwoEntityConditionBuilder<T, U> field(SFunction sFunction) {
-      String column = getColumnFromSFunction(sFunction);
-      this.field("t0", column);
+    public <R extends IAgileEntity> TwoEntityConditionBuilder<T, U> field(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.field("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.field("t1", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "不一致");
+      }
       return this;
     }
 
     /**
      * 支持lambda表达式指定eq条件
+     *
      * @param sFunction
      * @return
      */
-    public TwoEntityConditionBuilder<T, U> eq(SFunction<T, ?> sFunction) {
-      String column = getColumnFromSFunction(sFunction);
-      this.eq("t0", column);
+    public <R extends IAgileEntity> TwoEntityConditionBuilder<T, U> eq(SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.eq("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.eq("t1", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "不一致");
+      }
       return this;
     }
 
     /**
      * 支持lambda表达式指定notEq条件
+     *
      * @param sFunction
      * @return
      */
-    public TwoEntityConditionBuilder<T, U> notEq(SFunction<T, ?> sFunction) {
-      String column = getColumnFromSFunction(sFunction);
-      this.notEq("t0", column);
+    public <R extends IAgileEntity> TwoEntityConditionBuilder<T, U> notEq(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.notEq("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.notEq("t1", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "不一致");
+      }
       return this;
     }
 
     /**
      * 支持lambda表达式指定greater条件
+     *
      * @param sFunction
      * @return
      */
-    public TwoEntityConditionBuilder<T, U> greater(SFunction<T, ?> sFunction) {
-      String column = getColumnFromSFunction(sFunction);
-      this.greater("t0", column);
+    public <R extends IAgileEntity> TwoEntityConditionBuilder<T, U> greater(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.greater("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.greater("t1", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "不一致");
+      }
       return this;
     }
 
     /**
      * 支持lambda表达式指定greater条件
+     *
      * @param sFunction
      * @return
      */
-    public TwoEntityConditionBuilder<T, U> less(SFunction<T, ?> sFunction) {
-      String column = getColumnFromSFunction(sFunction);
-      this.less("t0", column);
+    public <R extends IAgileEntity> TwoEntityConditionBuilder<T, U> less(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.less("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.less("t1", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "不一致");
+      }
       return this;
     }
 
     /**
      * 支持lambda表达式指定greaterEqual条件
+     *
      * @param sFunction
      * @return
      */
-    public TwoEntityConditionBuilder<T, U> greaterEqual(SFunction<T, ?> sFunction) {
-      String column = getColumnFromSFunction(sFunction);
-      this.greaterEqual("t0", column);
+    public <R extends IAgileEntity> TwoEntityConditionBuilder<T, U> greaterEqual(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.greaterEqual("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.greaterEqual("t1", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "不一致");
+      }
       return this;
     }
 
     /**
      * 支持lambda表达式指定lessEqual条件
+     *
      * @param sFunction
      * @return
      */
-    public TwoEntityConditionBuilder<T, U> lessEqual(SFunction<T, ?> sFunction) {
-      String column = getColumnFromSFunction(sFunction);
-      this.lessEqual("t0", column);
+    public <R extends IAgileEntity> TwoEntityConditionBuilder<T, U> lessEqual(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.lessEqual("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.lessEqual("t1", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "不一致");
+      }
       return this;
     }
 
     /**
      * 支持lambda表达式指定groupby条件
+     *
      * @param sFunction
      * @return
      */
-    public TwoEntityConditionBuilder<T, U> groupby(SFunction<T, ?> sFunction) {
-      String column = getColumnFromSFunction(sFunction);
-      super.groupby("t0", column);
+    public <R extends IAgileEntity> TwoEntityConditionBuilder<T, U> groupby(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.groupby("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.groupby("t1", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "不一致");
+      }
       return this;
     }
 
     /**
      * 支持lambda表达式指定havingField条件
+     *
      * @param sFunction
      * @return
      */
-    public TwoEntityConditionBuilder<T, U> havingField(SFunction<T, ?> sFunction) {
-      String column = getColumnFromSFunction(sFunction);
-      super.havingField("t0", column);
+    public <R extends IAgileEntity> TwoEntityConditionBuilder<T, U> havingField(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.havingField("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.havingField("t1", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "不一致");
+      }
       return this;
     }
 
     /**
      * 支持lambda表达式指定orderbyAsc条件
+     *
      * @param sFunction
      * @return
      */
-    public TwoEntityConditionBuilder<T, U> orderbyAsc(SFunction<T, ?> sFunction) {
-      String column = getColumnFromSFunction(sFunction);
-      super.orderbyAsc("t0", column);
+    public <R extends IAgileEntity> TwoEntityConditionBuilder<T, U> orderbyAsc(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.orderbyAsc("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.orderbyAsc("t1", column);
+      } else {
+        throw new RuntimeException(
+            "传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass
+                .getName() + "不一致");
+      }
       return this;
     }
 
     /**
      * 支持lambda表达式指定orderByDesc条件
+     *
      * @param sFunction
      * @return
      */
-    public TwoEntityConditionBuilder<T, U> orderByDesc(SFunction<T, ?> sFunction) {
-      String column = getColumnFromSFunction(sFunction);
-      super.orderByDesc("t0", column);
+    public <R extends IAgileEntity> TwoEntityConditionBuilder<T, U> orderByDesc(
+        SFunction<R, ?> sFunction) {
+      SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
+      Class clazz = getImplClassFromSerializedLambda(serializedLambda);
+      String column = getColumnFromClass(clazz, serializedLambda);
+      if (Objects.equal(tClass, clazz)) {
+        this.orderByDesc("t0", column);
+      } else if (Objects.equal(uClass, clazz)) {
+        this.orderByDesc("t1", column);
+      } else {
+        throw new RuntimeException("传入的Function接口的所属class类：" + clazz.getName() + "与泛型类：" + tClass.getName() + "/" + uClass.getName() + "不一致");
+      }
       return this;
     }
 
@@ -507,7 +1296,6 @@ public class EntityCondition implements IMetaElement {
   public static class OneEntityConditionBuilder<T extends IAgileEntity> extends EntityConditionBuilder {
 
     protected OneEntityConditionBuilder() {
-      ;
     }
 
     /**
@@ -913,17 +1701,22 @@ public class EntityCondition implements IMetaElement {
 
   /**
    * 从lambda表达式中解析出column名称并返回
+   *
    * @param sFunction
    * @return
    */
   private static String getColumnFromSFunction(SFunction sFunction) {
     SerializedLambda serializedLambda = getSerializedLambdaFromSFunction(sFunction);
-    String fieldName = PropertyNamer.methodToProperty(serializedLambda.getImplMethodName());
     Class aClass = getImplClassFromSerializedLambda(serializedLambda);
-    Map<String, ColumnCache> columnCacheMap = LambdaUtils.getColumnMap(aClass);
+    return getColumnFromClass(aClass, serializedLambda);
+  }
+
+  private static String getColumnFromClass(Class clazz, SerializedLambda serializedLambda) {
+    String fieldName = PropertyNamer.methodToProperty(serializedLambda.getImplMethodName());
+    Map<String, ColumnCache> columnCacheMap = LambdaUtils.getColumnMap(clazz);
     ColumnCache columnCache = columnCacheMap.get(LambdaUtils.formatKey(fieldName));
     Assert.notNull(columnCache, "can not find lambda cache for this property [%s] of entity [%s]",
-        fieldName, aClass.getName());
+        fieldName, clazz.getName());
     String column = columnCache.getColumn();
     return column;
   }

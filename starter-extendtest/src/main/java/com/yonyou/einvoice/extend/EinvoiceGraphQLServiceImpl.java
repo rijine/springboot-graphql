@@ -7,7 +7,6 @@ import com.yonyou.einvoice.extend.einvoicehis.entity.EinvoiceHisVO;
 import com.yonyou.einvoice.extend.einvoicehis.service.IEinvoiceHisVOService;
 import com.yonyou.einvoice.extend.einvoicehisb.entity.EinvoiceHisBVO;
 import com.yonyou.einvoice.extend.einvoicehisb.service.IEinvoiceHisBVOService;
-import com.yonyou.einvoice.extend.einvoicehisext.entity.EinvoiceHisExtVO;
 import graphql.execution.batched.Batched;
 import graphql.language.Field;
 import io.leangen.graphql.annotations.GraphQLArgument;
@@ -62,7 +61,7 @@ public class EinvoiceGraphQLServiceImpl implements IGraphQLService {
    * @return
    */
   @GraphQLQuery(name = "einvoiceHisDynamic")
-  public List<EinvoiceHisExtVO> getEinvoiceHisVODynamic(
+  public List<EinvoiceHisVO> getEinvoiceHisVODynamic(
       @GraphQLArgument(name = "dynamicCond") EntityCondition dynamicCond, @GraphQLEnvironment
       Field field) {
     List einvoiceHisVOList = einvoiceHisVOService
@@ -71,7 +70,7 @@ public class EinvoiceGraphQLServiceImpl implements IGraphQLService {
   }
 
   @GraphQLQuery(name = "einvoiceHisRelative")
-  public List<EinvoiceHisExtVO> getEinvoiceHisRelative(
+  public List<EinvoiceHisVO> getEinvoiceHisRelative(
       @GraphQLArgument(name = "dynamicCond") EntityCondition dynamicCond) {
     List einvoiceHisVOList = einvoiceHisVOService.selectWithRelationByDynamicCondition(dynamicCond);
     return einvoiceHisVOList;
@@ -106,17 +105,17 @@ public class EinvoiceGraphQLServiceImpl implements IGraphQLService {
   @Batched
   @GraphQLQuery(name = "bvoList")
   public List<List<EinvoiceHisBVO>> getBvoList(
-      @GraphQLArgument(name = "hisList") @GraphQLContext List<EinvoiceHisExtVO> hisVOList,
+      @GraphQLArgument(name = "hisList") @GraphQLContext List<EinvoiceHisVO> hisVOList,
       @GraphQLEnvironment Field field) {
     List<String> selectFields = einvoiceHisBVOService.getSelectFields(field);
     QueryWrapper<EinvoiceHisBVO> queryWrapper = new QueryWrapper<>();
     queryWrapper.select(selectFields.toArray(new String[selectFields.size()]));
     queryWrapper
-        .in("hid", hisVOList.stream().map(EinvoiceHisExtVO::getId).collect(Collectors.toList()));
+        .in("hid", hisVOList.stream().map(EinvoiceHisVO::getId).collect(Collectors.toList()));
     List<EinvoiceHisBVO> einvoiceHisBVOList = einvoiceHisBVOService.selectList(queryWrapper);
     List<List<EinvoiceHisBVO>> resultList = einvoiceHisBVOService
         .getSubFieldListOfList(einvoiceHisBVOList, EinvoiceHisBVO::getHid,
-            hisVOList.stream().map(EinvoiceHisExtVO::getId));
+            hisVOList.stream().map(EinvoiceHisVO::getId));
     return resultList;
   }
 
@@ -128,7 +127,7 @@ public class EinvoiceGraphQLServiceImpl implements IGraphQLService {
    * @return
    */
   @GraphQLQuery(name = "einvoiceHisPermissionDynamic")
-  public List<EinvoiceHisExtVO> getEinvoiceHisPermissionVODynamic(
+  public List<EinvoiceHisVO> getEinvoiceHisPermissionVODynamic(
       @GraphQLArgument(name = "dynamicCond") EntityCondition dynamicCond,
       @GraphQLEnvironment Field field) {
     List einvoiceHisVOList = einvoiceHisVOPermissionService
@@ -158,7 +157,7 @@ public class EinvoiceGraphQLServiceImpl implements IGraphQLService {
   @Batched
   @GraphQLQuery(name = "artificialName")
   public List<String> getArtificialName(
-      @GraphQLArgument(name = "hisList") @GraphQLContext List<EinvoiceHisExtVO> hisVOList) {
+      @GraphQLArgument(name = "hisList") @GraphQLContext List<EinvoiceHisVO> hisVOList) {
     List<String> resultList = hisVOList.stream()
         .map(einvoiceHisVO -> einvoiceHisVO.getId() + "-" + einvoiceHisVO.getFpqqlsh()).collect(
             Collectors.toList());
@@ -174,7 +173,7 @@ public class EinvoiceGraphQLServiceImpl implements IGraphQLService {
   @Batched
   @GraphQLQuery(name = "artificialNameException")
   public List<String> getArtificialNameException(
-      @GraphQLArgument(name = "hisList") @GraphQLContext List<EinvoiceHisExtVO> hisVOList) {
+      @GraphQLArgument(name = "hisList") @GraphQLContext List<EinvoiceHisVO> hisVOList) {
     List<String> resultList = hisVOList.stream()
         .map(einvoiceHisVO -> einvoiceHisVO.getId() + "-" + einvoiceHisVO.getFpqqlsh()).collect(
             Collectors.toList());
@@ -187,7 +186,7 @@ public class EinvoiceGraphQLServiceImpl implements IGraphQLService {
    * @return
    */
   @GraphQLQuery(name = "testException")
-  public List<EinvoiceHisExtVO> testException() {
+  public List<EinvoiceHisVO> testException() {
     throw new RuntimeException("测试异常抛出");
   }
 
@@ -199,7 +198,7 @@ public class EinvoiceGraphQLServiceImpl implements IGraphQLService {
    */
   @GraphQLMutation(name = "saveEinvoiceHisList")
   public String einvoiceHisInsert(
-      @GraphQLArgument(name = "einvoiceHisList") List<EinvoiceHisExtVO> einvoiceHisVOList) {
+      @GraphQLArgument(name = "einvoiceHisList") List<EinvoiceHisVO> einvoiceHisVOList) {
     einvoiceHisVOService.insertBatchSomeColumn((List) einvoiceHisVOList);
     List<EinvoiceHisBVO> einvoiceHisBVOList = getEinvoiceHisBVOList(einvoiceHisVOList);
     einvoiceHisBVOService.insertBatchSomeColumn(einvoiceHisBVOList);
@@ -214,7 +213,7 @@ public class EinvoiceGraphQLServiceImpl implements IGraphQLService {
    */
   @GraphQLMutation(name = "saveEinvoiceHisListWithPermission")
   public String einvoiceHisInsertWithPermission(
-      @GraphQLArgument(name = "einvoiceHisList") List<EinvoiceHisExtVO> einvoiceHisVOList) {
+      @GraphQLArgument(name = "einvoiceHisList") List<EinvoiceHisVO> einvoiceHisVOList) {
     einvoiceHisVOPermissionService.insertBatchSomeColumn((List) einvoiceHisVOList);
     List<EinvoiceHisBVO> einvoiceHisBVOList = getEinvoiceHisBVOList((List) einvoiceHisVOList);
     einvoiceHisBVOPermissionService.insertBatchSomeColumn(einvoiceHisBVOList);
@@ -230,7 +229,7 @@ public class EinvoiceGraphQLServiceImpl implements IGraphQLService {
    */
   @GraphQLMutation(name = "deleteEinvoiceHisList")
   public String einvoiceHisDelete(
-      @GraphQLArgument(name = "einvoiceHisLIst") List<EinvoiceHisExtVO> einvoiceHisVOList) {
+      @GraphQLArgument(name = "einvoiceHisLIst") List<EinvoiceHisVO> einvoiceHisVOList) {
     QueryWrapper<EinvoiceHisVO> einvoiceHisVOQueryWrapper = new QueryWrapper<>();
     QueryWrapper<EinvoiceHisBVO> einvoiceHisBVOQueryWrapper = new QueryWrapper<>();
     einvoiceHisVOQueryWrapper.ne("id", "0");
@@ -250,7 +249,7 @@ public class EinvoiceGraphQLServiceImpl implements IGraphQLService {
    */
   @GraphQLMutation(name = "deleteEinvoiceHisListWithPermission")
   public String einvoiceHisDeleteWithPermission(
-      @GraphQLArgument(name = "einvoiceHisList") List<EinvoiceHisExtVO> einvoiceHisVOList) {
+      @GraphQLArgument(name = "einvoiceHisList") List<EinvoiceHisVO> einvoiceHisVOList) {
     QueryWrapper<EinvoiceHisVO> einvoiceHisVOQueryWrapper = new QueryWrapper<>();
     QueryWrapper<EinvoiceHisBVO> einvoiceHisBVOQueryWrapper = new QueryWrapper<>();
     einvoiceHisVOQueryWrapper.ne("id", "0");
@@ -262,7 +261,7 @@ public class EinvoiceGraphQLServiceImpl implements IGraphQLService {
     return "删除成功";
   }
 
-  private List<EinvoiceHisBVO> getEinvoiceHisBVOList(List<EinvoiceHisExtVO> einvoiceHisVOList) {
+  private List<EinvoiceHisBVO> getEinvoiceHisBVOList(List<EinvoiceHisVO> einvoiceHisVOList) {
     if (CollectionUtils.isEmpty(einvoiceHisVOList)) {
       return Collections.emptyList();
     }

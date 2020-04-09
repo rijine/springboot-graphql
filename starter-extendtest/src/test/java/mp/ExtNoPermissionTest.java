@@ -10,8 +10,7 @@ import com.yonyou.einvoice.common.agile.visitor.MybatisSqlVisitor;
 import com.yonyou.einvoice.extend.einvoicehis.entity.EinvoiceHisVO;
 import com.yonyou.einvoice.extend.einvoicehis.repository.EinvoiceHisVOMapper;
 import com.yonyou.einvoice.extend.einvoicehis.service.impl.EinvoiceHisVOServiceImpl;
-import com.yonyou.einvoice.extend.einvoicehisext.entity.EinvoiceHisExtVO;
-import com.yonyou.einvoice.extend.einvoicehisext.repository.EinvoiceHisExtVOMapper;
+import com.yonyou.einvoice.extend.einvoicehisb.entity.EinvoiceHisBVO;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,7 +37,7 @@ public class ExtNoPermissionTest {
   String fpqqlsh = "11223323";
   String tenantid = "test123";
 
-  List<String> selectFields = Arrays.asList("id", "extId", "extTenantid", "fpqqlsh");
+  List<String> selectFields = Arrays.asList("id", "fpqqlsh");
 
   QueryWrapper<EinvoiceHisVO> queryWrapper = new QueryWrapper<EinvoiceHisVO>();
 
@@ -49,8 +48,6 @@ public class ExtNoPermissionTest {
   @Autowired
   private EinvoiceHisVOMapper einvoiceHisVOMapper;
 
-  @Autowired
-  private EinvoiceHisExtVOMapper einvoiceHisExtVOMapper;
 
   private static Long id;
 
@@ -60,7 +57,6 @@ public class ExtNoPermissionTest {
   @Test
   public void initDeleteAll() {
     einvoiceHisVOMapper.delete(null);
-    einvoiceHisExtVOMapper.delete(null);
   }
 
   /**
@@ -68,28 +64,20 @@ public class ExtNoPermissionTest {
    */
   @Test
   public void test000InsertAndInsertBatch() {
-    EinvoiceHisExtVO einvoiceHisExtVO = new EinvoiceHisExtVO();
+    EinvoiceHisVO einvoiceHisExtVO = new EinvoiceHisVO();
     einvoiceHisExtVO.setKplx(1);
     einvoiceHisExtVO.setFpqqlsh(fpqqlsh);
     einvoiceHisExtVO.setTenantid(tenantid);
-    einvoiceHisExtVO.setExtTenantid(tenantid);
     einvoiceHisVOService.insert(einvoiceHisExtVO);
     id = einvoiceHisExtVO.getId();
     idList.add(einvoiceHisExtVO.getId());
     System.out.println(JSON.toJSONString(einvoiceHisExtVO));
-    checkResult(
-        "{\"extTenantid\":\"test123\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"test123\"}",
-        einvoiceHisExtVO);
     einvoiceHisVOService.insertBatchSomeColumn(Arrays.asList(einvoiceHisExtVO));
     idList.add(einvoiceHisExtVO.getId());
     System.out.println(JSON.toJSONString(einvoiceHisExtVO));
     Long tmpid = einvoiceHisExtVO.getId();
     checkEntityList(Arrays.asList(einvoiceHisExtVO), 1);
     einvoiceHisExtVO.setId(tmpid);
-    einvoiceHisExtVO.setExtId(tmpid);
-    checkResult(
-        "{\"extTenantid\":\"test123\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"test123\"}",
-        einvoiceHisExtVO);
   }
 
   /**
@@ -100,11 +88,6 @@ public class ExtNoPermissionTest {
     EinvoiceHisVO einvoiceHisVO = einvoiceHisVOService.selectById(id);
     checkEntityObj(einvoiceHisVO);
     einvoiceHisVO.setId(id);
-    ((EinvoiceHisExtVO) einvoiceHisVO).setExtId(id);
-    Assert.assertTrue(einvoiceHisVO instanceof EinvoiceHisExtVO);
-    checkResult(
-        "{\"bmbBbh\":\"10.0\",\"creator\":\"~\",\"einvoiceHisBVOList\":[],\"extTenantid\":\"test123\",\"fpjz\":\"0\",\"fplx\":\"0\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"test123\",\"tschbz\":\"0\",\"zfbz\":\"N\",\"zsfs\":\"0\"}",
-        einvoiceHisVO);
   }
 
   @Test
@@ -113,11 +96,7 @@ public class ExtNoPermissionTest {
     checkEntityList(einvoiceHisVOList);
     einvoiceHisVOList.forEach(einvoiceHisVO -> {
       einvoiceHisVO.setId(id);
-      ((EinvoiceHisExtVO) einvoiceHisVO).setExtId(id);
     });
-    checkResult(
-        "[{\"bmbBbh\":\"10.0\",\"creator\":\"~\",\"einvoiceHisBVOList\":[],\"extTenantid\":\"test123\",\"fpjz\":\"0\",\"fplx\":\"0\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"test123\",\"tschbz\":\"0\",\"zfbz\":\"N\",\"zsfs\":\"0\"},{\"einvoiceHisBVOList\":[],\"extTenantid\":\"test123\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"test123\"}]",
-        einvoiceHisVOList);
   }
 
   @Test
@@ -128,11 +107,7 @@ public class ExtNoPermissionTest {
     checkEntityList(einvoiceHisVOList);
     einvoiceHisVOList.forEach(einvoiceHisVO -> {
       einvoiceHisVO.setId(id);
-      ((EinvoiceHisExtVO) einvoiceHisVO).setExtId(id);
     });
-    checkResult(
-        "[{\"bmbBbh\":\"10.0\",\"creator\":\"~\",\"einvoiceHisBVOList\":[],\"extTenantid\":\"test123\",\"fpjz\":\"0\",\"fplx\":\"0\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"test123\",\"tschbz\":\"0\",\"zfbz\":\"N\",\"zsfs\":\"0\"},{\"einvoiceHisBVOList\":[],\"extTenantid\":\"test123\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"test123\"}]",
-        einvoiceHisVOList);
   }
 
   @Test
@@ -143,22 +118,53 @@ public class ExtNoPermissionTest {
   }
 
   @Test
-  public void test005SelectByDynamicMethod() {
+  public void test00501SelectByDynamicMethod() {
     EntityCondition condition = EntityCondition.builder()
         .where()
         .field("t0", "fpqqlsh").eq(fpqqlsh)
         .field("t0", "tenantid").eq(tenantid)
         .build();
+
     List<EinvoiceHisVO> einvoiceHisVOList = einvoiceHisVOService
         .selectByDynamicCondition(condition, selectFields);
     checkEntityList(einvoiceHisVOList);
     einvoiceHisVOList.forEach(einvoiceHisVO -> {
       einvoiceHisVO.setId(id);
-      ((EinvoiceHisExtVO) einvoiceHisVO).setExtId(id);
     });
-    checkResult(
-        "[{\"einvoiceHisBVOList\":[],\"extTenantid\":\"test123\",\"fpqqlsh\":\"11223323\"},{\"einvoiceHisBVOList\":[],\"extTenantid\":\"test123\",\"fpqqlsh\":\"11223323\"}]",
-        einvoiceHisVOList);
+  }
+
+  @Test
+  public void test00502SelectByDynamicMethod() {
+    EntityCondition condition = EntityCondition.oneEntityConditionBuilder(EinvoiceHisVO.class)
+        .where()
+        .field(EinvoiceHisVO::getFpqqlsh).eq(fpqqlsh)
+        .field(EinvoiceHisVO::getTenantid).eq(tenantid)
+        .build();
+
+    List<EinvoiceHisVO> einvoiceHisVOList = einvoiceHisVOService
+        .selectByDynamicCondition(condition, selectFields);
+    checkEntityList(einvoiceHisVOList);
+    einvoiceHisVOList.forEach(einvoiceHisVO -> {
+      einvoiceHisVO.setId(id);
+    });
+  }
+
+  @Test
+  public void test00503SelectDynamic() {
+    EntityCondition sourceCondition = EntityCondition
+        .twoEntityConditionBuilder(EinvoiceHisVO.class, EinvoiceHisBVO.class)
+        .innerJoin(EinvoiceHisBVO.class)
+        .on(EinvoiceHisVO::getId, EinvoiceHisBVO::getHid)
+        .where()
+        .field(EinvoiceHisVO::getFpqqlsh).eq(fpqqlsh)
+        .field(EinvoiceHisVO::getTenantid).eq(tenantid)
+        .field(EinvoiceHisVO::getTenantid).eq(EinvoiceHisBVO::getCorpid)
+        .orderbyAsc(EinvoiceHisVO::getId)
+        .page(1, 15)
+        .build();
+    List<EinvoiceHisVO> einvoiceHisVOList = einvoiceHisVOService
+        .selectByDynamicCondition(sourceCondition, Collections.emptyList());
+    Assert.assertNotNull(einvoiceHisVOList);
   }
 
   @Test
@@ -167,11 +173,7 @@ public class ExtNoPermissionTest {
     checkEntityList(einvoiceHisVOList);
     einvoiceHisVOList.forEach(einvoiceHisVO -> {
       einvoiceHisVO.setId(id);
-      ((EinvoiceHisExtVO) einvoiceHisVO).setExtId(id);
     });
-    checkResult(
-        "[{\"bmbBbh\":\"10.0\",\"creator\":\"~\",\"einvoiceHisBVOList\":[],\"extTenantid\":\"test123\",\"fpjz\":\"0\",\"fplx\":\"0\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"test123\",\"tschbz\":\"0\",\"zfbz\":\"N\",\"zsfs\":\"0\"},{\"einvoiceHisBVOList\":[],\"extTenantid\":\"test123\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"test123\"}]",
-        einvoiceHisVOList);
   }
 
   @Test
@@ -204,9 +206,6 @@ public class ExtNoPermissionTest {
     wrapper.eq("id", id);
     EinvoiceHisVO einvoiceHisVO = einvoiceHisVOService.selectOne(wrapper);
     System.out.println(JSON.toJSONString(einvoiceHisVO));
-    checkResult(
-        "{\"bmbBbh\":\"10.0\",\"creator\":\"~\",\"einvoiceHisBVOList\":[],\"extTenantid\":\"test123\",\"fpjz\":\"0\",\"fplx\":\"0\",\"fpqqlsh\":\"11223323\",\"kplx\":1,\"tenantid\":\"test123\",\"tschbz\":\"0\",\"zfbz\":\"N\",\"zsfs\":\"0\"}",
-        einvoiceHisVO);
   }
 
   @Test
@@ -215,15 +214,10 @@ public class ExtNoPermissionTest {
     Assert.assertNotNull(page);
     Assert.assertNotNull(page.getRecords());
     page.getRecords().forEach(record -> {
-      Assert.assertTrue(record instanceof EinvoiceHisExtVO);
       Assert.assertNotNull(record.getId());
-      Assert.assertNotNull(((EinvoiceHisExtVO) record).getExtId());
       Assert.assertNotNull(record.getTs());
-      Assert.assertNotNull(((EinvoiceHisExtVO) record).getExtTs());
       record.setId(null);
       record.setTs(null);
-      ((EinvoiceHisExtVO) record).setExtId(null);
-      ((EinvoiceHisExtVO) record).setExtTs(null);
     });
     System.out.println(JSON.toJSONString(page.getRecords()));
   }
@@ -234,7 +228,6 @@ public class ExtNoPermissionTest {
         .where()
         .field("t0", "fpqqlsh").eq(fpqqlsh)
         .field("t0", "tenantid").eq(tenantid)
-        .field("t0", "ext_tenantid").eq(tenantid)
         .orderbyAsc("t0", "id")
         .page(1, 15)
         .build();
@@ -242,7 +235,6 @@ public class ExtNoPermissionTest {
         .selectByDynamicCondition(sourceCondition, selectFields);
     Assert.assertNotNull(einvoiceHisVOList);
     Assert.assertEquals(2, einvoiceHisVOList.size());
-    checkEntityList(einvoiceHisVOList);
   }
 
   @Test
@@ -251,7 +243,6 @@ public class ExtNoPermissionTest {
         .where()
         .field("t0", "fpqqlsh").eq(fpqqlsh)
         .field("t0", "tenantid").eq(tenantid)
-        .field("t0", "ext_tenantid").eq(tenantid)
         .orderbyAsc("t0", "id")
         .page(1, 15)
         .build();
@@ -259,7 +250,6 @@ public class ExtNoPermissionTest {
         .selectByDynamicCondition(sourceCondition, Collections.emptyList());
     Assert.assertNotNull(einvoiceHisVOList);
     Assert.assertEquals(2, einvoiceHisVOList.size());
-    checkEntityList(einvoiceHisVOList);
   }
 
   /**
@@ -272,14 +262,10 @@ public class ExtNoPermissionTest {
         .where()
         .field("t0", "fpqqlsh").eq(fpqqlsh)
         .field("t0", "tenantid").eq(tenantid)
-        .field("t0", "ext_tenantid").eq(tenantid)
         .orderbyAsc("t0", "id")
         .build();
     MybatisSqlVisitor visitor = new MybatisSqlVisitor();
     visitor.visit(sourceCondition);
-    Assert.assertEquals(
-        "inner join einvoice_his_b t1 on t0.`id` = t1.`hid` where t0.`fpqqlsh` = #{_p1} and t0.`tenantid` = #{_p2} and t0.`ext_tenantid` = #{_p3} order by t0.`id` asc",
-        visitor.getSql());
     List<EinvoiceHisVO> einvoiceHisVOList = einvoiceHisVOService
         .selectWithRelationByDynamicCondition(sourceCondition);
     Assert.assertNotNull(einvoiceHisVOList);
@@ -295,28 +281,21 @@ public class ExtNoPermissionTest {
     wrapper.eq("id", id);
     EinvoiceHisVO einvoiceHisVO = einvoiceHisVOService.selectById(id);
     Assert.assertNotNull(einvoiceHisVO);
-    Assert.assertTrue(einvoiceHisVO instanceof EinvoiceHisExtVO);
     einvoiceHisVO.setFpqqlsh("432134");
-    ((EinvoiceHisExtVO) einvoiceHisVO).setExtTenantid("543443");
     einvoiceHisVOService.update(einvoiceHisVO, wrapper);
     einvoiceHisVO = einvoiceHisVOService.selectById(id);
     Assert.assertEquals("432134", einvoiceHisVO.getFpqqlsh());
-    Assert.assertEquals("543443", ((EinvoiceHisExtVO) einvoiceHisVO).getExtTenantid());
   }
 
   @Test
   public void test101UpdateById() {
     EinvoiceHisVO einvoiceHisVO = einvoiceHisVOService.selectById(id);
     Assert.assertNotNull(einvoiceHisVO);
-    Assert.assertTrue(einvoiceHisVO instanceof EinvoiceHisExtVO);
     Assert.assertEquals("432134", einvoiceHisVO.getFpqqlsh());
-    Assert.assertEquals("543443", ((EinvoiceHisExtVO) einvoiceHisVO).getExtTenantid());
     einvoiceHisVO.setFpqqlsh(fpqqlsh);
-    ((EinvoiceHisExtVO) einvoiceHisVO).setExtTenantid(tenantid);
     einvoiceHisVOService.updateById(einvoiceHisVO);
     einvoiceHisVO = einvoiceHisVOService.selectById(id);
     Assert.assertEquals(fpqqlsh, einvoiceHisVO.getFpqqlsh());
-    Assert.assertEquals(tenantid, ((EinvoiceHisExtVO) einvoiceHisVO).getExtTenantid());
   }
 
   @Test(expected = Exception.class)
@@ -383,12 +362,9 @@ public class ExtNoPermissionTest {
     Assert.assertEquals(count, einvoiceHisVOList.size());
     for (EinvoiceHisVO einvoiceHisVO : einvoiceHisVOList) {
       Assert.assertNotNull(einvoiceHisVO.getId());
-      Assert.assertNotNull(((EinvoiceHisExtVO) einvoiceHisVO).getExtId());
-      Assert.assertEquals(einvoiceHisVO.getId(), ((EinvoiceHisExtVO) einvoiceHisVO).getExtId());
     }
     einvoiceHisVOList.forEach(einvoiceHisVO -> {
       einvoiceHisVO.setId(null);
-      ((EinvoiceHisExtVO) einvoiceHisVO).setExtId(null);
     });
     System.out.println(JSON.toJSONString(einvoiceHisVOList));
   }
@@ -396,25 +372,17 @@ public class ExtNoPermissionTest {
 
   private void checkEntityObj(EinvoiceHisVO einvoiceHisVO) {
     System.out.println(JSON.toJSONString(einvoiceHisVO));
-    Assert.assertTrue(einvoiceHisVO instanceof EinvoiceHisExtVO);
     Assert.assertNotNull(einvoiceHisVO.getId());
-    Assert.assertNotNull(((EinvoiceHisExtVO) einvoiceHisVO).getExtId());
-    Assert.assertEquals(einvoiceHisVO.getId(), ((EinvoiceHisExtVO) einvoiceHisVO).getExtId());
     einvoiceHisVO.setId(null);
-    ((EinvoiceHisExtVO) einvoiceHisVO).setExtId(null);
     System.out.println(JSON.toJSONString(einvoiceHisVO));
   }
 
   private void checkResult(String expected, EinvoiceHisVO obj) {
     System.out.println(JSON.toJSONString(obj));
-    Assert.assertTrue(obj instanceof EinvoiceHisExtVO);
     Assert.assertNotNull(obj.getId());
-    Assert.assertNotNull(((EinvoiceHisExtVO) obj).getExtId());
     obj.setId(null);
-    ((EinvoiceHisExtVO) obj).setExtId(null);
     obj.setTs(null);
     obj.setCreatetime(null);
-    ((EinvoiceHisExtVO) obj).setExtTs(null);
     Assert.assertEquals(expected, JSON.toJSONString(obj));
   }
 
@@ -425,9 +393,6 @@ public class ExtNoPermissionTest {
       obj.setId(null);
       obj.setTs(null);
       obj.setCreatetime(null);
-      ((EinvoiceHisExtVO) obj).setExtId(null);
-      ((EinvoiceHisExtVO) obj).setExtTs(null);
-      Assert.assertTrue(obj instanceof EinvoiceHisExtVO);
     });
     Assert.assertEquals(expected, JSON.toJSONString(objs));
   }

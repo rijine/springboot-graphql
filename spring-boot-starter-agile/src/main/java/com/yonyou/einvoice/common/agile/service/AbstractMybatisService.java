@@ -766,7 +766,6 @@ public class AbstractMybatisService<T, Q extends IMetaMapper> extends
     Iterator<List<? extends Serializable>> iterator = lists.iterator();
     while (iterator.hasNext()) {
       List<? extends Serializable> list = iterator.next();
-      iterator.remove();
       resultList.addAll(mapper.selectBatchIds(list));
     }
     return resultList;

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.yonyou.einvoice.common.agile.entity.IAgileEntity;
 import com.yonyou.einvoice.common.agile.mp.anno.InsertBatchIgnore;
 import com.yonyou.einvoice.common.agile.mp.relate.Many;
 import com.yonyou.einvoice.extend.einvoicehisb.entity.EinvoiceHisBVO;
@@ -26,7 +27,7 @@ import org.hibernate.validator.constraints.Length;
 @Getter
 @Setter
 @ToString
-public class EinvoiceHisVO {
+public class EinvoiceHisVO implements IAgileEntity {
 
   /**
    * einvoice_his.id 主键

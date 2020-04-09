@@ -3,6 +3,7 @@ package com.yonyou.einvoice.extend.einvoicehisb.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.yonyou.einvoice.common.agile.entity.IAgileEntity;
 import com.yonyou.einvoice.common.agile.mp.anno.InsertBatchIgnore;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import java.math.BigDecimal;
@@ -20,7 +21,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class EinvoiceHisBVO {
+public class EinvoiceHisBVO implements IAgileEntity {
 
   /**
    * einvoice_his_b.id 主键

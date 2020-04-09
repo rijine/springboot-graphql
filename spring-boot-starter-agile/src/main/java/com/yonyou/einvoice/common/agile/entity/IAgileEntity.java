@@ -17,12 +17,17 @@ public interface IAgileEntity {
    * @author liuqiangm
    */
   default String getTableName() {
-    Class<?> clazz = this.getClass();
-    TableName table = clazz.getAnnotation(TableName.class);
-    if(table != null && !StringUtils.isEmpty(table.value())) {
+    Class<? extends IAgileEntity> clazz = this.getClass();
+    return getTableName(clazz);
+  }
+
+  static <T extends IAgileEntity> String getTableName(Class<T> tClass) {
+    TableName table = tClass.getAnnotation(TableName.class);
+    if (table != null && !StringUtils.isEmpty(table.value())) {
       return table.value();
     }
-    String tableName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, clazz.getSimpleName());
+    String tableName = CaseFormat.UPPER_CAMEL
+        .to(CaseFormat.LOWER_UNDERSCORE, tClass.getSimpleName());
     return tableName;
   }
 
