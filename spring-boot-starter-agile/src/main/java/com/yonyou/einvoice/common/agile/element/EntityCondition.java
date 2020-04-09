@@ -1,5 +1,11 @@
 package com.yonyou.einvoice.common.agile.element;
 
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
+import com.yonyou.einvoice.common.agile.entity.IAgileEntity;
 import com.yonyou.einvoice.common.agile.enums.DirectionEnum;
 import com.yonyou.einvoice.common.agile.enums.JointypeEnum;
 import com.yonyou.einvoice.common.agile.enums.OperatorEnum;
@@ -11,9 +17,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -85,28 +93,863 @@ public class EntityCondition implements IMetaElement {
     return new EntityConditionBuilder();
   }
 
+  @GraphQLIgnore
+  public static <T extends IAgileEntity> OneEntityConditionBuilder<T> oneEntityBuilder(Class<T> clazz) {
+    return new OneEntityConditionBuilder<T>();
+  }
+
+  public static class TwoEntityConditionBuilder<T extends IAgileEntity, U extends IAgileEntity> extends EntityConditionBuilder {
+
+    protected TwoEntityConditionBuilder() {
+
+    }
+
+    /**
+     * 支持lambda表达式拼接on查询条件
+     * @param sFunction1
+     * @param sFunction2
+     * @return
+     */
+    public TwoEntityConditionBuilder<T, U> on(SFunction<T, ?> sFunction1, SFunction<U, ?> sFunction2) {
+      String column1 = getColumnFromSFunction(sFunction1);
+      String column2 = getColumnFromSFunction(sFunction2);
+      this.on("t0", column1, "t1", column2);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定field条件
+     * @param sFunction
+     * @return
+     */
+    public TwoEntityConditionBuilder<T, U> field(SFunction sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      this.field("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定eq条件
+     * @param sFunction
+     * @return
+     */
+    public TwoEntityConditionBuilder<T, U> eq(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      this.eq("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定notEq条件
+     * @param sFunction
+     * @return
+     */
+    public TwoEntityConditionBuilder<T, U> notEq(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      this.notEq("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定greater条件
+     * @param sFunction
+     * @return
+     */
+    public TwoEntityConditionBuilder<T, U> greater(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      this.greater("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定greater条件
+     * @param sFunction
+     * @return
+     */
+    public TwoEntityConditionBuilder<T, U> less(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      this.less("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定greaterEqual条件
+     * @param sFunction
+     * @return
+     */
+    public TwoEntityConditionBuilder<T, U> greaterEqual(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      this.greaterEqual("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定lessEqual条件
+     * @param sFunction
+     * @return
+     */
+    public TwoEntityConditionBuilder<T, U> lessEqual(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      this.lessEqual("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定groupby条件
+     * @param sFunction
+     * @return
+     */
+    public TwoEntityConditionBuilder<T, U> groupby(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      super.groupby("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定havingField条件
+     * @param sFunction
+     * @return
+     */
+    public TwoEntityConditionBuilder<T, U> havingField(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      super.havingField("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定orderbyAsc条件
+     * @param sFunction
+     * @return
+     */
+    public TwoEntityConditionBuilder<T, U> orderbyAsc(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      super.orderbyAsc("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定orderByDesc条件
+     * @param sFunction
+     * @return
+     */
+    public TwoEntityConditionBuilder<T, U> orderByDesc(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      super.orderByDesc("t0", column);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> distinct(Boolean distinct) {
+      super.distinct(distinct);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> innerJoin(String target, String alias) {
+      super.innerJoin(target, alias);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> leftJoin(String target, String alias) {
+      super.leftJoin(target, alias);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> rightJoin(String target, String alias) {
+      super.rightJoin(target, alias);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> on(String sourceAlias1, String field1, String sourceAlias2,
+        String field2) {
+      super.on(sourceAlias1, field1, sourceAlias2, field2);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> where() {
+      super.where();
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> andStart() {
+      super.andStart();
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> andEnd() {
+      super.andEnd();
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> orStart() {
+      super.orStart();
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> orEnd() {
+      super.orEnd();
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> field(String sourceAlias, String sourceField) {
+      super.field(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> eq(String strValue) {
+      super.eq(strValue);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> eq(String sourceAlias, String sourceField) {
+      super.eq(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> notEq(String strValue) {
+      super.notEq(strValue);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> notEq(String sourceAlias, String sourceField) {
+      super.notEq(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> greater(String strValue) {
+      super.greater(strValue);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> greater(String sourceAlias, String sourceField) {
+      super.greater(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> less(String strValue) {
+      super.less(strValue);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> less(String sourceAlias, String sourceField) {
+      super.less(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> greaterEqual(String strValue) {
+      super.greaterEqual(strValue);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> greaterEqual(String sourceAlias, String sourceField) {
+      super.greaterEqual(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> lessEqual(String strValue) {
+      super.lessEqual(strValue);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> lessEqual(String sourceAlias, String sourceField) {
+      super.lessEqual(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> like(String strValue) {
+      super.like(strValue);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> likeStart(String strValue) {
+      super.likeStart(strValue);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> likeEnd(String strValue) {
+      super.likeEnd(strValue);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> in(List list) {
+      super.in(list);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> in(Collection list) {
+      super.in(list);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> notIn(List list) {
+      super.notIn(list);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> notIn(Collection list) {
+      super.notIn(list);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> isNull() {
+      super.isNull();
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> isNotNull() {
+      super.isNotNull();
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> between(String strValue1, String strValue2) {
+      super.between(strValue1, strValue2);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> groupby(String sourceAlias, String field) {
+      super.groupby(sourceAlias, field);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> page(Integer pageIndex, Integer size) {
+      super.page(pageIndex, size);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> limit(Integer offset, Integer size) {
+      super.limit(offset, size);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> havingField(String sourceAlias, String sourceField) {
+      super.havingField(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> havingOperator(OperatorEnum operatorEnum) {
+      super.havingOperator(operatorEnum);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> havingStrValue(String strValue) {
+      super.havingStrValue(strValue);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> havingStrValue(String strValue1, String strValue2) {
+      super.havingStrValue(strValue1, strValue2);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> havingListValue(String strValue) {
+      super.havingListValue(strValue);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> orderbyAsc(String sourceAlias, String sourceField) {
+      super.orderbyAsc(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public TwoEntityConditionBuilder<T, U> orderByDesc(String sourceAlias, String sourceField) {
+      super.orderByDesc(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public EntityCondition build() {
+      return super.build();
+    }
+  }
+
+  public static class OneEntityConditionBuilder<T extends IAgileEntity> extends EntityConditionBuilder {
+
+    protected OneEntityConditionBuilder() {
+      ;
+    }
+
+    /**
+     * 支持lambda表达式拼接on查询条件
+     * @param sFunction
+     * @param sourceAlias2
+     * @param field2
+     * @return
+     */
+    public OneEntityConditionBuilder<T> on(SFunction<T, ?> sFunction, String sourceAlias2,
+        String field2) {
+      String column = getColumnFromSFunction(sFunction);
+      this.on("t0", column, sourceAlias2, field2);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定field条件
+     * @param sFunction
+     * @return
+     */
+    public OneEntityConditionBuilder<T> field(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      this.field("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定eq条件
+     * @param sFunction
+     * @return
+     */
+    public OneEntityConditionBuilder<T> eq(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      this.eq("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定notEq条件
+     * @param sFunction
+     * @return
+     */
+    public OneEntityConditionBuilder<T> notEq(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      this.notEq("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定greater条件
+     * @param sFunction
+     * @return
+     */
+    public OneEntityConditionBuilder<T> greater(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      this.greater("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定greater条件
+     * @param sFunction
+     * @return
+     */
+    public OneEntityConditionBuilder<T> less(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      this.less("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定greaterEqual条件
+     * @param sFunction
+     * @return
+     */
+    public OneEntityConditionBuilder<T> greaterEqual(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      this.greaterEqual("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定lessEqual条件
+     * @param sFunction
+     * @return
+     */
+    public OneEntityConditionBuilder<T> lessEqual(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      this.lessEqual("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定groupby条件
+     * @param sFunction
+     * @return
+     */
+    public OneEntityConditionBuilder<T> groupby(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      super.groupby("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定havingField条件
+     * @param sFunction
+     * @return
+     */
+    public OneEntityConditionBuilder<T> havingField(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      super.havingField("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定orderbyAsc条件
+     * @param sFunction
+     * @return
+     */
+    public OneEntityConditionBuilder<T> orderbyAsc(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      super.orderbyAsc("t0", column);
+      return this;
+    }
+
+    /**
+     * 支持lambda表达式指定orderByDesc条件
+     * @param sFunction
+     * @return
+     */
+    public OneEntityConditionBuilder<T> orderByDesc(SFunction<T, ?> sFunction) {
+      String column = getColumnFromSFunction(sFunction);
+      super.orderByDesc("t0", column);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> distinct(Boolean distinct) {
+      super.distinct(distinct);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> innerJoin(String target, String alias) {
+      super.innerJoin(target, alias);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> leftJoin(String target, String alias) {
+      super.leftJoin(target, alias);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> rightJoin(String target, String alias) {
+      super.rightJoin(target, alias);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> on(String sourceAlias1, String field1, String sourceAlias2,
+        String field2) {
+      super.on(sourceAlias1, field1, sourceAlias2, field2);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> where() {
+      super.where();
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> andStart() {
+      super.andStart();
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> andEnd() {
+      super.andEnd();
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> orStart() {
+      super.orStart();
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> orEnd() {
+      super.orEnd();
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> field(String sourceAlias, String sourceField) {
+      super.field(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> eq(String strValue) {
+      super.eq(strValue);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> eq(String sourceAlias, String sourceField) {
+      super.eq(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> notEq(String strValue) {
+      super.notEq(strValue);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> notEq(String sourceAlias, String sourceField) {
+      super.notEq(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> greater(String strValue) {
+      super.greater(strValue);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> greater(String sourceAlias, String sourceField) {
+      super.greater(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> less(String strValue) {
+      super.less(strValue);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> less(String sourceAlias, String sourceField) {
+      super.less(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> greaterEqual(String strValue) {
+      super.greaterEqual(strValue);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> greaterEqual(String sourceAlias, String sourceField) {
+      super.greaterEqual(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> lessEqual(String strValue) {
+      super.lessEqual(strValue);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> lessEqual(String sourceAlias, String sourceField) {
+      super.lessEqual(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> like(String strValue) {
+      super.like(strValue);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> likeStart(String strValue) {
+      super.likeStart(strValue);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> likeEnd(String strValue) {
+      super.likeEnd(strValue);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> in(List list) {
+      super.in(list);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> in(Collection list) {
+      super.in(list);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> notIn(List list) {
+      super.notIn(list);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> notIn(Collection list) {
+      super.notIn(list);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> isNull() {
+      super.isNull();
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> isNotNull() {
+      super.isNotNull();
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> between(String strValue1, String strValue2) {
+      super.between(strValue1, strValue2);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> groupby(String sourceAlias, String field) {
+      super.groupby(sourceAlias, field);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> page(Integer pageIndex, Integer size) {
+      super.page(pageIndex, size);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> limit(Integer offset, Integer size) {
+      super.limit(offset, size);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> havingField(String sourceAlias, String sourceField) {
+      super.havingField(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> havingOperator(OperatorEnum operatorEnum) {
+      super.havingOperator(operatorEnum);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> havingStrValue(String strValue) {
+      super.havingStrValue(strValue);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> havingStrValue(String strValue1, String strValue2) {
+      super.havingStrValue(strValue1, strValue2);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> havingListValue(String strValue) {
+      super.havingListValue(strValue);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> orderbyAsc(String sourceAlias, String sourceField) {
+      super.orderbyAsc(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public OneEntityConditionBuilder<T> orderByDesc(String sourceAlias, String sourceField) {
+      super.orderByDesc(sourceAlias, sourceField);
+      return this;
+    }
+
+    @Override
+    public EntityCondition build() {
+      return super.build();
+    }
+
+  }
+
+  /**
+   * 从lambda表达式中解析出column名称并返回
+   * TODO
+   * @param sFunction
+   * @return
+   */
+  private static String getColumnFromSFunction(SFunction sFunction) {
+    SerializedLambda serializedLambda = LambdaUtils.resolve(sFunction);
+    String fieldName = PropertyNamer.methodToProperty(serializedLambda.getImplMethodName());
+    Class aClass = serializedLambda.getInstantiatedMethodType();
+    Map<String, ColumnCache> columnCacheMap = LambdaUtils.getColumnMap(aClass);
+    ColumnCache columnCache = columnCacheMap.get(LambdaUtils.formatKey(fieldName));
+    Assert.notNull(columnCache, "can not find lambda cache for this property [%s] of entity [%s]",
+        fieldName, aClass.getName());
+    String column = columnCache.getColumn();
+    return column;
+  }
+
   public static class EntityConditionBuilder {
 
-    private Boolean distinct = false;
-    private List<Join> joins = new ArrayList<>();
-    private Conditions conditions;
-    private Groupby groupby;
-    private Having having;
-    private Orderby orderby;
-    private Limit limit;
+    protected Boolean distinct = false;
+    protected List<Join> joins = new ArrayList<>();
+    protected Conditions conditions;
+    protected Groupby groupby;
+    protected Having having;
+    protected Orderby orderby;
+    protected Limit limit;
 
-    private Join tmpJoin;
-    private On tmpOn;
+    protected Join tmpJoin;
+    protected On tmpOn;
 
-    private Condition tmpCondition = null;
+    protected Condition tmpCondition = null;
 
-    private Stack<Condition> preConditionStack = new Stack<>();
+    protected Stack<Condition> preConditionStack = new Stack<>();
 
-    private Stack<OperatorEnum> operatorEnumStack = new Stack<>();
+    protected Stack<OperatorEnum> operatorEnumStack = new Stack<>();
 
-    private Condition tmpHavingCondition;
+    protected Condition tmpHavingCondition;
 
-    private EntityConditionBuilder() {
+    protected EntityConditionBuilder() {
     }
 
     public EntityConditionBuilder distinct(Boolean distinct) {
@@ -574,7 +1417,7 @@ public class EntityCondition implements IMetaElement {
       return sourceCondition;
     }
 
-    private void addCondition() {
+    void addCondition() {
       if (tmpCondition != null && preConditionStack.isEmpty()) {
         conditions.getConditionList().add(tmpCondition);
       } else if (tmpCondition != null) {
