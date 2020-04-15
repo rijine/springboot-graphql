@@ -1,7 +1,6 @@
 package com.yonyou.einvoice.common.agile.service;
 
 import com.yonyou.einvoice.common.agile.element.EntityCondition;
-import com.yonyou.einvoice.common.agile.mp.repository.IExtendMetaMapper;
 import com.yonyou.einvoice.common.agile.mp.repository.IMetaMapper;
 import com.yonyou.einvoice.common.agile.visitor.ExtendConditionVisitor;
 import com.yonyou.einvoice.common.agile.visitor.MybatisSqlVisitor;
@@ -17,26 +16,15 @@ import java.util.TreeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-public abstract class AbstractService<T, Q extends IMetaMapper> extends AbstractCommonService {
+public abstract class AbstractService<T, Q extends IMetaMapper> {
 
   @Autowired
   @SuppressWarnings("all")
   protected Q mapper;
-
-  /**
-   * 父表的column集合
-   */
-  protected Set<String> parentTableColumnSet;
-
   /**
    * 子表的column集合
    */
   protected Set<String> selfTableColumnSet;
-
-  /**
-   * 扩展类Mapper。如果存在扩展类，则mapper不为空。 如果不存在扩展类，则mapper为空。
-   */
-  protected IExtendMetaMapper extendMapper;
 
   /**
    * 根据传入的参数列表，返回需要在实体所对应的数据库表中实际查询的字段
@@ -70,18 +58,7 @@ public abstract class AbstractService<T, Q extends IMetaMapper> extends Abstract
   protected List<T> innerSelect(EntityCondition condition, List<String> selectFields) {
     Map<String, Object> map = new TreeMap<>();
     List<String> fields = new ArrayList<>();
-    if (!CollectionUtils.isEmpty(selectFields) && extendMapper != null) {
-      selectFields.forEach(selectField -> {
-        String field = selectField.substring(1, selectField.length() - 1);
-        if (parentTableColumnSet != null && parentTableColumnSet.contains(field)) {
-          fields.add("t_s0." + selectField);
-        }
-        if (selfTableColumnSet != null && selfTableColumnSet.contains(field)) {
-          fields.add("t_s1." + selectField);
-        }
-      });
-      map.put("selectFields", fields);
-    } else if (!CollectionUtils.isEmpty(selectFields)) {
+    if (!CollectionUtils.isEmpty(selectFields)) {
       map.put("selectFields", selectFields);
     }
     if (condition.getDistinct()) {
@@ -94,9 +71,6 @@ public abstract class AbstractService<T, Q extends IMetaMapper> extends Abstract
     map.put("conditionSql", visitor.getSql());
     // 本次查询生成的sql中，包含的mybatis变量。
     map.putAll(visitor.getMybatisParamMap());
-    if (extendMapper != null) {
-      return extendMapper.selectByDynamicCondition(map);
-    }
     return ((IMetaMapper<T>) mapper).selectByDynamicCondition(map);
   }
 
@@ -113,9 +87,6 @@ public abstract class AbstractService<T, Q extends IMetaMapper> extends Abstract
     map.put("conditionSql", visitor.getSql());
     // 本次查询生成的sql中，包含的mybatis变量。
     map.putAll(visitor.getMybatisParamMap());
-    if (extendMapper != null) {
-      return extendMapper.selectByDynamicCondition(map);
-    }
     return ((IMetaMapper<T>) mapper).selectByDynamicCondition(map);
   }
 
@@ -124,7 +95,6 @@ public abstract class AbstractService<T, Q extends IMetaMapper> extends Abstract
     SecureVisitor secureVisitor = new SecureVisitor();
     secureVisitor.visit(condition);
     ExtendConditionVisitor visitor = new ExtendConditionVisitor();
-    visitor.setParentColumnSet(parentTableColumnSet);
     visitor.setSelfColumnSet(selfTableColumnSet);
     visitor.visit(condition);
   }

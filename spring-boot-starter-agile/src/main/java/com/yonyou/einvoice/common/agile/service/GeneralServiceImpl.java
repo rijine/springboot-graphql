@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
  * generalService 用于纯通过前端拼接查询条件，生成完整sql，并返回执行结果
  */
 @Service
-public class GeneralServiceImpl extends AbstractCommonService implements ITestGQLService {
+public class GeneralServiceImpl implements ITestGQLService {
 
   @GraphQLQuery(name = "selectDynamic", description = "纯通过前端拼接查询条件，生成查询sql（可分页）")
   public SqlEntity selectDynamic(@GraphQLArgument(name = "tableName") String tableName,

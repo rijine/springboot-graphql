@@ -13,7 +13,6 @@ import com.yonyou.einvoice.common.agile.graphql.servlet.components.DefaultExecut
 import com.yonyou.einvoice.common.agile.graphql.servlet.components.DefaultGraphQLInvocation;
 import com.yonyou.einvoice.common.agile.graphql.servlet.components.FastJsonSerializer;
 import com.yonyou.einvoice.common.agile.mp.injector.DynamicSqlInjector;
-import com.yonyou.einvoice.common.agile.service.GeneralPermissionService;
 import com.yonyou.einvoice.common.agile.service.GeneralServiceImpl;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -28,8 +27,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 @EnableConfigurationProperties({MetadataProperties.class, OnlineIQLProperties.class,
     TestIQLProperties.class})
 @Import({EinvoiceGraphQLExceptionInterceptor.class, DynamicSqlInjector.class,
-    GeneralServiceImpl.class,
-    GeneralPermissionService.class, GraphQLConfig.class, EinvoiceConfig.class,
+    GeneralServiceImpl.class, GraphQLConfig.class, EinvoiceConfig.class,
     DefaultExecutionInputCustomizer.class,
     DefaultExecutionResultHandler.class, DefaultGraphQLInvocation.class, FastJsonSerializer.class,
     DefaultExecutionResultHandler.class,

@@ -9,8 +9,6 @@
   <modules>
     <module>starter-test</module>
     <module>spring-boot-starter-agile</module>
-    <module>starter-test2</module>
-    <module>starter-extendtest</module>
   </modules>
   <groupId>com.github.pkuliuqiang</groupId>
   <version>0.0.1-SNAPSHOT</version>

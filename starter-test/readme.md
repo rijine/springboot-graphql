@@ -46,7 +46,7 @@ graphql接口默认分为两类：
 ![示例.png](https://i.loli.net/2019/11/08/JksDrut61OZ9wXW.png)
 或打开graphql playground工具，输入:
 ```
-http://localhost:8080/graphql
+http://localhost:8080/onlineql
 ```
 
 界面如下：
@@ -68,6 +68,8 @@ query relative($condition1: EntityConditionInput) {
     fpqqlsh
     tenantid
     kplx
+    extId
+    extTenantid
     einvoiceHisBVOList {
       id
       hid
@@ -82,9 +84,11 @@ query page($condition: EntityConditionInput) {
   einvoiceCount: einvoiceHisCountAllDynamic(dynamicCond: $condition)
   einvoiceList: einvoiceHisDynamic(dynamicCond: $condition) {
     id
+    extId
     fpqqlsh
     artificialName
     tenantid
+    extTenantid
     bvoList {
       id
       xmmc
@@ -99,9 +103,11 @@ query pagePermission($condition: EntityConditionInput) {
   einvoiceCount: einvoiceHisPermissionCountDynamic(dynamicCond: $condition)
   einvoiceHisPermissionDynamic(dynamicCond: $condition) {
     id
+    extId
     fpqqlsh
-    tenantid
     artificialName
+    tenantid
+    extTenantid
     bvoList {
       id
       xmmc
@@ -125,12 +131,12 @@ query queryException {
 }
 
 # 测试无权限控制下的批量新增
-mutation saveList($einvoiceList: [EinvoiceHisVOInput]) {
+mutation saveList($einvoiceList: [EinvoiceHisExtVOInput]) {
   saveEinvoiceHisList(einvoiceHisList: $einvoiceList)
 }
 
 # 测试有权限控制下的批量新增
-mutation saveListWithPermission($einvoiceList: [EinvoiceHisVOInput]) {
+mutation saveListWithPermission($einvoiceList: [EinvoiceHisExtVOInput]) {
   saveEinvoiceHisListWithPermission(einvoiceHisList: $einvoiceList)
 }
 
@@ -162,11 +168,7 @@ mutation deleteListWithPermission {
           "field2": "hid"
         }
       }
-    ],
-    "limit": {
-      "pageIndex": 1,
-      "size": 5
-    }
+    ]
   },
   "condition": {
     "conditions": {

@@ -19,6 +19,7 @@ import com.yonyou.einvoice.common.agile.enums.OperatorEnum;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import lombok.Getter;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -27,8 +28,8 @@ import org.springframework.util.StringUtils;
  *
  * @author liuqiangm
  */
+@Getter
 public class BaseSqlVisitor extends BaseVisitor {
-
   protected StringBuilder sqlBuilder = new StringBuilder(256);
 
   @Override

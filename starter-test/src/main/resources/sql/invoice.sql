@@ -3,7 +3,7 @@ CREATE TABLE `einvoice_his` (
   `FPQQLSH` varchar(64) NOT NULL COMMENT '发票请求流水号 ',
   `FPLX` varchar(4) DEFAULT '0' COMMENT '发票类型1增值税电子普通发票;3增值税普通发票;4增值税专用发票;8成品油电子发票;9成品油普通发票(卷式);10成品油普通发票;11成品油专用发票;12增值税普通发票(卷式)',
   `ZSFS` varchar(1) DEFAULT '0' COMMENT '征税方式 0-普通征税 2-差额征税',
-  `KPLX` int(1) NOT NULL DEFAULT '0' COMMENT '开票类型 ',
+  `KPLX` int(1) NOT NULL COMMENT '开票类型 ',
   `FPJZ` char(1) DEFAULT '0' COMMENT '发票介质:0-电子发票;1-纸质发票。',
   `XSF_NSRSBH` char(20) DEFAULT NULL COMMENT '销售方纳税人识别号',
   `XSF_MC` varchar(100) DEFAULT NULL COMMENT '销售方名称',
@@ -59,8 +59,7 @@ CREATE TABLE `einvoice_his` (
   KEY `his_yhmydm` (`YFP_DM`,`YFP_HM`) USING BTREE,
   KEY `idx_his_corporgid` (`corpId`,`orgId`),
   KEY `idx_his_kprq` (`KPRQ`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
+) ENGINE=InnoDB AUTO_INCREMENT=247 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `einvoice_his_b` (
   `ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -91,4 +90,11 @@ CREATE TABLE `einvoice_his_b` (
   `ts` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '时间戳',
   PRIMARY KEY (`ID`),
   KEY `his_bid` (`HID`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=369 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `einvoice_his_ext` (
+  `ext_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '扩展表-主键',
+  `ext_tenantid` varchar(64) DEFAULT NULL COMMENT '扩展表-租户id',
+  `ext_ts` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '扩展表-时间戳',
+  PRIMARY KEY (`ext_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=247 DEFAULT CHARSET=utf8;

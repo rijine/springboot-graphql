@@ -2,6 +2,7 @@ package com.yonyou.einvoice.common.agile.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.yonyou.einvoice.common.agile.element.EntityCondition;
 import graphql.language.Field;
 import java.io.Serializable;
@@ -59,9 +60,7 @@ public interface IMybatisService<T> {
 
   List<T> selectByDynamicCondition(EntityCondition condition, Field field);
 
-  List<T> selectByDynamicCondition(EntityCondition condition, List<String> fields);
-
-  List<T> selectWithRelationByDynamicCondition(EntityCondition condition);
+  List<T> selectByDynamicCondition(EntityCondition condition, SFunction<T, ?>... sFunctions);
 
   int countAllByDynamicCondition(EntityCondition condition);
 }
