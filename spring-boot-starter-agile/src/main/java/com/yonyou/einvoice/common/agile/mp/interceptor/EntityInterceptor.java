@@ -1,11 +1,14 @@
 package com.yonyou.einvoice.common.agile.mp.interceptor;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.esotericsoftware.reflectasm.ConstructorAccess;
+import com.esotericsoftware.reflectasm.MethodAccess;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Objects;
 import com.yonyou.einvoice.common.agile.service.CommonEntityDao;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -14,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
@@ -30,7 +34,7 @@ public class EntityInterceptor implements Interceptor {
   TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
 
   private static final Map<Class, List<ReflectEntity>> reflectMap = new ConcurrentHashMap<>();
-  private static final Map<Class, Constructor> constructorMap = new ConcurrentHashMap<>();
+  private static final Map<Class, Supplier> constructorMap = new ConcurrentHashMap<>();
 
   @Override
   public Object intercept(Invocation invocation) throws Throwable {
@@ -45,8 +49,8 @@ public class EntityInterceptor implements Interceptor {
     while (resultSet.next()) {
       // 从entityClass中获取实体类内每个字段的反射值
       List<ReflectEntity> reflectEntityList = getReflectEntityListFromClass(entityClass);
-      Constructor constructor = getConstructorFromClass(entityClass);
-      Object entity = constructor.newInstance();
+      Supplier supplier = getEntitySupplierFromClass(entityClass);
+      Object entity = supplier.get();
       for (ReflectEntity reflectEntity : reflectEntityList) {
         String columnName = reflectEntity.getColumnName();
         Class propertyType = reflectEntity.getPropertyType();
@@ -77,16 +81,26 @@ public class EntityInterceptor implements Interceptor {
   public void setProperties(Properties properties) {
   }
 
-  private Constructor getConstructorFromClass(Class clazz) {
+  private Supplier getEntitySupplierFromClass(Class clazz) {
     try {
+      ConstructorAccess constructorAccess = ConstructorAccess.get(clazz);
       Constructor constructor = clazz.getConstructor();
       constructor.setAccessible(true);
-      constructorMap.put(clazz, constructor);
-      return constructor;
-    } catch (NoSuchMethodException e) {
+      constructorMap.put(clazz, () -> {
+        try {
+          return constructorAccess.newInstance();
+        } catch (Exception e1) {
+          try {
+            return constructor.newInstance();
+          } catch (Exception e2) {
+            e2.printStackTrace();
+            return null;
+          }
+        }
+      });
+    } catch (Exception e) {
       e.printStackTrace();
     }
-
     return constructorMap.get(clazz);
   }
 
@@ -97,20 +111,17 @@ public class EntityInterceptor implements Interceptor {
     }
     List<Field> fieldList = getAllFields(clazz);
     result = new ArrayList<>(fieldList.size());
+    MethodAccess methodAccess = MethodAccess.get(clazz);
     for (Field field : fieldList) {
+      // final修饰的字段需要忽略
+      if (Modifier.isFinal(field.getModifiers())) {
+        continue;
+      }
       String propertyName = field.getName();
       Class propertyType = field.getType();
       ReflectEntity reflectEntity = new ReflectEntity();
       reflectEntity.setPropertyName(propertyName);
       reflectEntity.setPropertyType(propertyType);
-      // 反射设置实体类型的值
-      reflectEntity.setPropertyValueConsumer((instance, val) -> {
-        try {
-          field.set(instance, val);
-        } catch (IllegalAccessException e) {
-          e.printStackTrace();
-        }
-      });
       TableField tableField = field.getAnnotation(TableField.class);
       if (tableField != null && !tableField.exist()) {
         continue;
@@ -120,6 +131,24 @@ public class EntityInterceptor implements Interceptor {
       } else {
         reflectEntity
             .setColumnName(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, propertyName));
+      }
+      // 优先使用ReflectAsm框架，回调set方法
+      try {
+        String setMethodName =
+            "set" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+        final int index = methodAccess.getIndex(setMethodName);
+        reflectEntity.setPropertyValueConsumer((instace, val) -> {
+          methodAccess.invoke(instace, index, val);
+        });
+      } catch (Exception e) {
+        // 反射设置实体类型的值
+        reflectEntity.setPropertyValueConsumer((instance, val) -> {
+          try {
+            field.set(instance, val);
+          } catch (IllegalAccessException e1) {
+            e1.printStackTrace();
+          }
+        });
       }
       result.add(reflectEntity);
     }
