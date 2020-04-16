@@ -98,3 +98,28 @@ CREATE TABLE `einvoice_his_ext` (
   `ext_ts` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '扩展表-时间戳',
   PRIMARY KEY (`ext_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=247 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `agg`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name1` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `name2` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `name3` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `name4` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `name5` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `code1` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `code2` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `code3` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `code4` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `code5` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `fpqqlsh` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `createtime` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP,
+  `ts` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of agg
+-- ----------------------------
+INSERT INTO `agg` VALUES (1, 'cn', 'en', 'fr', 'jp', 'kr', 'cn_code', 'en_code', 'fr_code', 'jp_code', 'kr_code', '1760P', '2020-04-16 18:54:24', '2020-04-16 19:52:35');
+INSERT INTO `agg` VALUES (2, 'cn', 'en', 'fr', 'jp', 'kr', 'cn_code', 'en_code', 'fr_code', 'jp_code', 'kr_code', '1760P', '2020-04-16 18:54:24', '2020-04-16 19:52:47');
+INSERT INTO `agg` VALUES (3, 'cn', 'en', 'fr', 'jp', 'kr', 'cn_code', 'en_code', 'fr_code', 'jp_code', 'kr_code', '1760P', '2020-04-16 18:54:24', '2020-04-16 19:52:48');

@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import mp.entity.Agg;
+import mp.entity.EinvoiceAggEntity;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -30,7 +32,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ExtNoPermissionTest {
+public class EntityTest {
 
   @Autowired
   private EinvoiceHisVOServiceImpl einvoiceHisVOService;
@@ -40,8 +42,6 @@ public class ExtNoPermissionTest {
 
   String fpqqlsh = "11223323";
   String tenantid = "test123";
-
-  List<String> selectFields = Arrays.asList("id", "fpqqlsh");
 
   QueryWrapper<EinvoiceHisVO> queryWrapper = new QueryWrapper<EinvoiceHisVO>();
 
@@ -100,7 +100,22 @@ public class ExtNoPermissionTest {
     System.out.println(entity.getSql());
     List<EinvoiceHisVO> einvoiceHisVOList = commonEntityDao
         .selectEntityOfType(entity, EinvoiceHisVO.class);
-    System.out.println(einvoiceHisVOList);
+    System.out.println(JSON.toJSONString(einvoiceHisVOList));
+    System.out.println(
+        JSON.toJSONString(commonEntityDao.selectEntityOfType(entity, EinvoiceHisVO.class)));
+    System.out.println(
+        JSON.toJSONString(commonEntityDao.selectEntityOfType(entity, EinvoiceHisVO.class)));
+    System.out.println(
+        JSON.toJSONString(commonEntityDao.selectEntityOfType(entity, EinvoiceHisVO.class)));
+  }
+
+  @Test
+  public void test0021AggSelect() {
+    SqlOneEntity entity = SqlOneEntity.anBuilder(Agg.class).build();
+    System.out.println(entity.getSql());
+    List<EinvoiceAggEntity> entityList = commonEntityDao
+        .selectEntityOfType(entity, EinvoiceAggEntity.class);
+    System.out.println(JSON.toJSONString(entityList));
   }
 
   @Test
