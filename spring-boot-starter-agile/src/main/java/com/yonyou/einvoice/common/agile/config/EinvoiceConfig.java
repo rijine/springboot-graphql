@@ -1,6 +1,7 @@
 package com.yonyou.einvoice.common.agile.config;
 
 import com.yonyou.einvoice.common.agile.graphql.strategy.BatchedAsyncExecutionStrategy;
+import com.yonyou.einvoice.common.agile.mp.interceptor.EntityInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,11 @@ public class EinvoiceConfig {
     BatchedAsyncExecutionStrategy batchedAsyncExecutionStrategy = new BatchedAsyncExecutionStrategy();
     batchedAsyncExecutionStrategy.setAsyncTransmitContext(null);
     return batchedAsyncExecutionStrategy;
+  }
+
+  @Bean
+  public EntityInterceptor entityInterceptor() {
+    return new EntityInterceptor();
   }
 
 }

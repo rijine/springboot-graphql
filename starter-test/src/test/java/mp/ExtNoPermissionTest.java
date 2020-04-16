@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yonyou.einvoice.Application;
 import com.yonyou.einvoice.common.agile.element.EntityCondition;
+import com.yonyou.einvoice.common.agile.element.SqlOneEntity;
+import com.yonyou.einvoice.common.agile.service.CommonEntityDao;
 import com.yonyou.einvoice.extend.einvoicehis.entity.EinvoiceHisVO;
 import com.yonyou.einvoice.extend.einvoicehis.repository.EinvoiceHisVOMapper;
 import com.yonyou.einvoice.extend.einvoicehis.service.impl.EinvoiceHisVOServiceImpl;
@@ -32,6 +34,9 @@ public class ExtNoPermissionTest {
 
   @Autowired
   private EinvoiceHisVOServiceImpl einvoiceHisVOService;
+
+  @Autowired
+  private CommonEntityDao commonEntityDao;
 
   String fpqqlsh = "11223323";
   String tenantid = "test123";
@@ -87,6 +92,15 @@ public class ExtNoPermissionTest {
     EinvoiceHisVO einvoiceHisVO = einvoiceHisVOService.selectById(id);
     checkEntityObj(einvoiceHisVO);
     einvoiceHisVO.setId(id);
+  }
+
+  @Test
+  public void test0020Select() {
+    SqlOneEntity entity = SqlOneEntity.anBuilder(EinvoiceHisVO.class).build();
+    System.out.println(entity.getSql());
+    List<EinvoiceHisVO> einvoiceHisVOList = commonEntityDao
+        .selectEntityOfType(entity, EinvoiceHisVO.class);
+    System.out.println(einvoiceHisVOList);
   }
 
   @Test

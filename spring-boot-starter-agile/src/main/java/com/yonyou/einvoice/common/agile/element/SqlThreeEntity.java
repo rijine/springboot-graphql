@@ -18,7 +18,7 @@ import org.springframework.util.CollectionUtils;
  *
  * @author liuqiangm
  */
-public class SqlThreeEntity<T, U, S> {
+public class SqlThreeEntity<T, U, S> implements ISqlEntity {
 
   private Class<T> tClass;
   private Class<U> uClass;
@@ -39,10 +39,12 @@ public class SqlThreeEntity<T, U, S> {
    *
    * @return
    */
+  @Override
   public String getSql() {
     return sqlVisitor.getSql();
   }
 
+  @Override
   public Map<String, Object> getMybatisParamMap() {
     return sqlVisitor.getMybatisParamMap();
   }
