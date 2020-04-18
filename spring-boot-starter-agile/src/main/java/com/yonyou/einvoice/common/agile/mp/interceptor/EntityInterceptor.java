@@ -12,12 +12,17 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -29,6 +34,7 @@ import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.type.TypeHandlerRegistry;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 @Intercepts({@Signature(type = ResultSetHandler.class, method = "handleResultSets", args = {
@@ -49,17 +55,41 @@ public class EntityInterceptor implements Interceptor {
     //获得结果集
     ResultSet resultSet = statement.getResultSet();
     List<Object> resultList = new ArrayList<>();
+    Set<String> set = null;
     while (resultSet.next()) {
+      if (set == null) {
+        set = getColumnSetFromResultSet(resultSet);
+      }
       // 从entityClass中获取实体类内每个字段的反射值
       List<ReflectEntity> reflectEntityList = getReflectEntityListFromClass(entityClass);
       Supplier supplier = getEntitySupplierFromClass(entityClass);
       Object entity = supplier.get();
       for (ReflectEntity reflectEntity : reflectEntityList) {
-        reflectEntity.process(entity, resultSet);
+        if (CollectionUtils.isEmpty(set)) {
+          reflectEntity.process(entity, resultSet);
+        } else {
+          reflectEntity.process(entity, resultSet, set);
+        }
       }
       resultList.add(entity);
     }
     return resultList;
+  }
+
+  private Set<String> getColumnSetFromResultSet(ResultSet resultSet) {
+    try {
+      ResultSetMetaData metaData = resultSet.getMetaData();
+      int columnCount = metaData.getColumnCount();
+      Set<String> columnSet = new HashSet<>((int) (columnCount / 0.75) + 1);
+      for (int i = 1; i <= columnCount; i++) {
+        String columnName = metaData.getColumnName(i);
+        columnSet.add(columnName);
+      }
+      return columnSet;
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return Collections.emptySet();
   }
 
   @Override

@@ -22,6 +22,7 @@ public class EinvoiceAggEntity {
   private MultiLang name3;
   @AggField(aggPrefix = "code")
   private MultiLang code;
+  private String fpqqlsh;
   private Date createtime;
   private Date ts;
 }
